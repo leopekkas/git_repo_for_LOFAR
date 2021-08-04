@@ -942,7 +942,7 @@ def view_wsclean_clicked():
         end_time = myvars["end_time"]
     wscommands = lines_in_wsclean(myvars, bool_vars, MS_file_name, start_time, end_time)
     for x in range(len(wscommands)):
-        print(wscommands[x] + " "),
+        print(wscommands[x]),
 
 view_wsclean_btn = Button(left_frame, text="View", command=view_wsclean_clicked, width=3)
 view_wsclean_btn.grid(row=main_row_ind, column=1, sticky = W+N, pady=3, padx=(0, 5))
