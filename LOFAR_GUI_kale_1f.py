@@ -940,7 +940,7 @@ def view_wsclean_clicked():
         start_time = myvars["start_time"]
     if myvars.has_key("end_time"):
         end_time = myvars["end_time"]
-    wscommands = lines_in_wsclean(myvars, bool_vars, start_time, end_time)
+    wscommands = lines_in_wsclean(myvars, bool_vars, MS_file_name, start_time, end_time)
     for x in range(len(wscommands)):
         print(wscommands[x] + " "),
 
