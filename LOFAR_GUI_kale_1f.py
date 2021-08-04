@@ -317,7 +317,7 @@ sourcedb_output = StringVar(root, "Ateam_LBA_CC.sourcedb")
 use_datetime = BooleanVar(root, True)
 time_format_variable = StringVar(root, "%Y-%m-%d %H:%M:%S")
 
-MS_input_variable = StringVar(left_frame, "ID_SB_uv.dppp.MS")
+MS_input_variable = StringVar(root, "ID_SB_uv.dppp.MS")
 
 # Coloring options
 main_color = 'white'
