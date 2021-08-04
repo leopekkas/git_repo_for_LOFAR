@@ -133,7 +133,7 @@ def read_config(filename, bool_vars, input_set, MS_id, use_datetime, time_format
             print("The config file contains a \'Datetime\' object as it's time input, please mark the \"Use datetime\" option or double check you config file\n")
             return -1
 
-    ws_list_ret = lines_in_config(myvars, ws_list, input_set, start_time, end_time)
+    ws_list_ret = lines_in_wsclean(myvars, bool_vars, input_set, start_time, end_time)
 
     # (Return a list of terminal inputs)
     return ws_list_ret
