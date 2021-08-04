@@ -3,7 +3,7 @@ import subprocess as sub
 import os, errno
 import shutil
 from datetime import datetime, time, timedelta
-from UI_helper_functions_py2 import proceed_warning_message
+from UI_helper_functions import proceed_warning_message
 import csv
 
 def lines_in_wsclean(myvars, bool_vars, start_time, end_time):

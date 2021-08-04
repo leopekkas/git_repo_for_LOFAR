@@ -944,7 +944,7 @@ def view_wsclean_clicked():
     for x in range(len(wscommands)):
         print(wscommands[x] + " "),
 
-view_wsclean_btn = Button(left_frame, text="wsclean", command=view_wsclean_clicked, width=view_width)
+view_wsclean_btn = Button(left_frame, text="View", command=view_wsclean_clicked, width=view_width)
 view_wsclean_btn.grid(row=main_row_ind, column=1, sticky = W+N, pady=3, padx=(2, 3))
 buttons.append(view_wsclean_btn)
 
