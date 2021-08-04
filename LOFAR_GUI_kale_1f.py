@@ -3,7 +3,7 @@ import tkFileDialog as filedialog
 import time
 import subprocess as sub
 from Redirect import *
-from File_reader import read_config, print_config, make_predict_file, make_applycal_file
+from File_reader import read_config, print_config, make_predict_file, make_applycal_file, lines_in_wsclean
 from File_reader import make_applybeam_file, print_parset, make_sourcedb, print_sourcedb, read_MS_info
 from fits_plotting_tool import save_fits, produce_video, icrs_to_helio, plot_single_fits
 from UI_helper_functions import disableButtons, enableButtons, setUpCheckbuttons, setUpTerminalLog, setUpInformationLog
@@ -920,6 +920,34 @@ wsclean_btn = Button(left_frame, text="wsclean", command=wsclean_clicked, width=
 main_row_ind += 1
 wsclean_btn.grid(row=main_row_ind, column=0, sticky = W+N, pady=3, padx=(70, 3))
 buttons.append(wsclean_btn)
+
+def view_wsclean_clicked():
+    conf_filename = config_file_name.get()
+    myvars = {}
+    try:
+        with open(conf_filename) as f:
+            for line in f:
+                name, value = line.partition("=")[::2]
+                myvars[name.strip()] = str(value)
+    except (OSError, IOError, KeyboardInterrupt):
+        print("An error occured with reading the config file\n")
+        return None
+
+    start_time = "01-01-2000 00:00:00"
+    end_time = "01-01-2000 00:00:00"
+
+    if myvars.has_key("start_time"):
+        start_time = myvars["start_time"]
+    if myvars.has_key("end_time"):
+        end_time = myvars["end_time"]
+    wscommands = lines_in_wsclean(myvars, bool_vars, start_time, end_time)
+    for x in range(len(wscommands)):
+        print(wscommands[x] + " "),
+
+view_wsclean_btn = Button(left_frame, text="wsclean", command=view_wsclean_clicked, width=view_width)
+view_wsclean_btn.grid(row=main_row_ind, column=1, sticky = W+N, pady=3, padx=(2, 3))
+buttons.append(view_wsclean_btn)
+
 
 # Run a coordinate transformation
 def coord_clicked():

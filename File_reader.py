@@ -3,9 +3,78 @@ import subprocess as sub
 import os, errno
 import shutil
 from datetime import datetime, time, timedelta
-from UI_helper_functions import proceed_warning_message
+from UI_helper_functions_py2 import proceed_warning_message
 import csv
 
+def lines_in_wsclean(myvars, bool_vars, start_time, end_time):
+
+    ws_list = []
+
+    ws_list.append("wsclean")
+
+    if (bool_vars[0].get() and myvars.has_key("cores")):
+        ws_list.append("-j")
+        ws_list.append(myvars["cores"])
+    if (bool_vars[1].get() and myvars.has_key("memory_limit")):
+        ws_list.append("-mem")
+        ws_list.append(myvars["memory_limit"])
+    if (bool_vars[2].get()):
+        ws_list.append("-no-reorder")
+    if (bool_vars[3].get()):
+        ws_list.append("-no-update-model-required")
+    if (bool_vars[4].get() and myvars.has_key("mgain")):
+        ws_list.append("-mgain")
+        ws_list.append(myvars["mgain"])
+    if (bool_vars[5].get() and myvars.has_key("weight_briggs")):
+        ws_list.append("-weight")
+        ws_list.append("briggs")
+        ws_list.append(myvars["weight_briggs"])
+    if (bool_vars[6].get() and myvars.has_key("size")):
+        ws_list.append("-size")
+        ws_list.append(myvars["size"])
+        if myvars.has_key("size2"):
+            ws_list.append(myvars["size2"])
+        else:
+            ws_list.append(myvars["size"])
+    if (bool_vars[7].get() and myvars.has_key("scale")):
+        scale_string = myvars["scale"] + "asec"
+        ws_list.append("-scale")
+        ws_list.append(scale_string)
+    if (bool_vars[8].get() and myvars.has_key("polarisation")):
+        ws_list.append("-pol")
+        ws_list.append(myvars["polarisation"])
+    if (bool_vars[9].get() and myvars.has_key("auto_mask")):
+        ws_list.append("-auto-mask")
+        ws_list.append(myvars["auto_mask"])
+    if (bool_vars[10].get()):
+        ws_list.append("-multiscale")
+    if (bool_vars[11].get() and myvars.has_key("auto_threshold")):
+        ws_list.append("-auto-threshold")
+        ws_list.append(myvars["auto_threshold"])
+    if (bool_vars[12].get() and myvars.has_key("data_column")):
+        ws_list.append("-data-column")
+        ws_list.append(myvars["data_column"])
+    if (bool_vars[13].get() and myvars.has_key("n_iter")):
+        ws_list.append("-niter")
+        ws_list.append(myvars["n_iter"])
+    if (bool_vars[14].get() and myvars.has_key("intervals_out")):
+        ws_list.append("-intervals-out")
+        ws_list.append(myvars["intervals_out"])
+    if (bool_vars[15].get() and myvars.has_key("start_time")):
+        ws_list.append("-interval")
+        ws_list.append(str(start_time))
+        if myvars.has_key("end_time"):
+            ws_list.append(str(end_time))
+    if (bool_vars[16].get()):
+        ws_list.append("-fit-beam")
+    if (bool_vars[17].get()):
+        ws_list.append("-make-psf")
+    ws_list.append(input_set.get())
+
+    ws_list_ret = [x.replace("\n", "") for x in ws_list]
+
+    # (Return a list of terminal inputs)
+    return ws_list_ret
 
 def check_if_datetime(input, format):
     try:
@@ -33,8 +102,13 @@ def read_config(filename, bool_vars, input_set, MS_id, use_datetime, time_format
         print("An error occured with reading the config file\n")
         return -1
 
-    start_time = myvars["start_time"]
-    end_time = myvars["end_time"]
+    start_time = "01-01-2000 00:00:00"
+    end_time = "01-01-2000 00:00:00"
+
+    if myvars.has_key("start_time"):
+        start_time = myvars["start_time"]
+    if myvars.has_key("end_time"):
+        end_time = myvars["end_time"]
 
     # If the user wants to use datetime as a time input run it through calculate_real_time_into_steps
     if (use_datetime.get() == True):
@@ -45,7 +119,7 @@ def read_config(filename, bool_vars, input_set, MS_id, use_datetime, time_format
             MS_end_datetime = MS_values[1]
             total_steps = MS_values[2]
             if (check_if_datetime(start_time, time_format) and check_if_datetime(end_time, time_format)):
-                print("Start time: " + MS_start_datetime + "\nEnd time:" + MS_end_datetime + "\nNsteps" + total_steps + "\n")
+                print("Start time: " + MS_start_datetime + "\nEnd time:" + MS_end_datetime + "\nnsteps" + total_steps + "\n")
                 start_time, end_time = calculate_real_time_into_steps(start_time, end_time, MS_start_datetime, MS_end_datetime, total_steps, time_format)
             else:
                 print("Config file input is not in the format " + time_format.get() + ": " + str(start_time))
@@ -59,66 +133,7 @@ def read_config(filename, bool_vars, input_set, MS_id, use_datetime, time_format
             print("The config file contains a \'Datetime\' object as it's time input, please mark the \"Use datetime\" option or double check you config file\n")
             return -1
 
-    ws_list = []
-
-    ws_list.append("wsclean")
-
-    if (bool_vars[0].get()):
-        ws_list.append("-j")
-        ws_list.append(myvars["cores"])
-    if (bool_vars[1].get()):
-        ws_list.append("-mem")
-        ws_list.append(myvars["memory_limit"])
-    if (bool_vars[2].get()):
-        ws_list.append("-no-reorder")
-    if (bool_vars[3].get()):
-        ws_list.append("-no-update-model-required")
-    if (bool_vars[4].get() and myvars.has_key("mgain")):
-        ws_list.append("-mgain")
-        ws_list.append(myvars["mgain"])
-    if (bool_vars[5].get() and myvars.has_key("weight_briggs")):
-        ws_list.append("-weight")
-        ws_list.append("briggs")
-        ws_list.append(myvars["weight_briggs"])
-    if (bool_vars[6].get()):
-        ws_list.append("-size")
-        ws_list.append(myvars["size"])
-        ws_list.append(myvars["size2"])
-    if (bool_vars[7].get()):
-        scale_string = myvars["scale"] + "asec"
-        ws_list.append("-scale")
-        ws_list.append(scale_string)
-    if (bool_vars[8].get()):
-        ws_list.append("-pol")
-        ws_list.append(myvars["polarisation"])
-    if (bool_vars[9].get() and myvars.has_key("auto_mask")):
-        ws_list.append("-auto-mask")
-        ws_list.append(myvars["auto_mask"])
-    if (bool_vars[10].get()):
-        ws_list.append("-multiscale")
-    if (bool_vars[11].get() and myvars.has_key("auto_threshold")):
-        ws_list.append("-auto-threshold")
-        ws_list.append(myvars["auto_threshold"])
-    if (bool_vars[12].get()):
-        ws_list.append("-data-column")
-        ws_list.append(myvars["data_column"])
-    if (bool_vars[13].get()):
-        ws_list.append("-niter")
-        ws_list.append(myvars["n_iter"])
-    if (bool_vars[14].get()):
-        ws_list.append("-intervals-out")
-        ws_list.append(myvars["intervals_out"])
-    if (bool_vars[15].get()):
-        ws_list.append("-interval")
-        ws_list.append(str(start_time))
-        ws_list.append(str(end_time))
-    if (bool_vars[16].get()):
-        ws_list.append("-fit-beam")
-    if (bool_vars[17].get()):
-        ws_list.append("-make-psf")    
-    ws_list.append(input_set.get())
-
-    ws_list_ret = [x.replace("\n", "") for x in ws_list]
+    ws_list_ret = lines_in_config(myvars, ws_list, start_time, end_time)
 
     # (Return a list of terminal inputs)
     return ws_list_ret
@@ -208,7 +223,8 @@ def make_sourcedb(input, output):
     if output.endswith('.sourcedb'):
         # Check if prefix.sourcedb exists and remove it if it does
         if os.path.isdir(output):
-            if proceed_warning_message("Overlapping file names", "This sourcedb already exists in the working directory, continuing will overwrite it. \n\nDo you wish to proceed?"):
+            message = "Overlapping file names", "This sourcedb already exists in the working directory, continuing will overwrite it. \n\nDo you wish to proceed?"
+            if proceed_warning_message(message):
                 try:
                     shutil.rmtree(source_output)
                     print("Removed and wrote a new \'" + source_output  + "\' file \n")
@@ -218,7 +234,7 @@ def make_sourcedb(input, output):
                 p = sub.call(["makesourcedb", input_string, output_string])
                 print("makesourcedb" + input_string + " " + output_string + "\n")
             else:
-                print("No new .sourcedb file created")
+                print("No new .sourcedb file created\n")
         else:
             p = sub.call(["makesourcedb", input_string, output_string])
             print("makesourcedb" + input_string + " " + output_string + "\n")
