@@ -317,6 +317,8 @@ sourcedb_output = StringVar(root, "Ateam_LBA_CC.sourcedb")
 use_datetime = BooleanVar(root, True)
 time_format_variable = StringVar(root, "%Y-%m-%d %H:%M:%S")
 
+MS_input_variable = StringVar(left_frame, "ID_SB_uv.dppp.MS")
+
 # Coloring options
 main_color = 'white'
 frame_color = 'grey'
@@ -369,21 +371,6 @@ filemenu.add_separator()
 filemenu.add_command(label="Exit", command=root.quit)
 menubar.add_cascade(label="File", menu=filemenu)
 
-settingsmenu = Menu(menubar, tearoff=0)
-settingsmenu.add_command(label="Manage the config file", command=manage_config_clicked)
-menubar.add_cascade(label="Settings", menu=settingsmenu)
-
-commandmenu = Menu(menubar, tearoff=0)
-commandmenu.add_command(label="Run a job queue", command=job_queue_clicked)
-menubar.add_cascade(label="Command options", menu=commandmenu)
-
-helpmenu = Menu(menubar, tearoff=0)
-helpmenu.add_command(label="Help Index", command=donothing)
-helpmenu.add_command(label="About...", command=donothing)
-menubar.add_cascade(label="Help", menu=helpmenu)
-
-MS_input_variable = StringVar(left_frame, "ID_SB_uv.dppp.MS")
-
 formatmenu = Menu(menubar, tearoff=0)
 
 MS_input_menu = Menu(menubar, tearoff=0)
@@ -392,15 +379,22 @@ MS_input_menu.add_command(label="ID_SB_uv.MS", command= lambda: MS_input_variabl
 MS_input_menu.add_command(label="*.MS", command= lambda: MS_input_variable.set("*.MS"))
 MS_input_menu.add_command(label="Free typing", command= lambda: MS_input_variable.set("Free typing"))
 
-date_format_menu = Menu(formatmenu, tearoff=0)
-date_format_menu.add_command(label="YYYY-MM-DD HH:MM:SS (default)", command= lambda: time_format_variable.set("%Y-%m-%d %H:%M:%S"))
-date_format_menu.add_command(label="Option 2", command= lambda: time_format_variable.set("%Y-%m-%d %H:%M:%S"))
-date_format_menu.add_command(label="Option 3 etc.", command= lambda: time_format_variable.set("%Y-%m-%d %H:%M:%S"))
-
 formatmenu.add_cascade(label="MS input file format", menu=MS_input_menu)
-formatmenu.add_cascade(label="Config datetime format", menu=date_format_menu)
 
-menubar.add_cascade(label="Formatting options", menu=formatmenu)
+menubar.add_cascade(label="Format", menu=formatmenu)
+
+settingsmenu = Menu(menubar, tearoff=0)
+settingsmenu.add_command(label="Manage the config file", command=manage_config_clicked)
+menubar.add_cascade(label="Settings", menu=settingsmenu)
+
+commandmenu = Menu(menubar, tearoff=0)
+commandmenu.add_command(label="Job queue", command=job_queue_clicked)
+menubar.add_cascade(label="Commands", menu=commandmenu)
+
+helpmenu = Menu(menubar, tearoff=0)
+helpmenu.add_command(label="Help Index", command=donothing)
+helpmenu.add_command(label="About...", command=donothing)
+menubar.add_cascade(label="Help", menu=helpmenu)
 
 root.config(menu=menubar)
 
@@ -868,6 +862,7 @@ predict_btn.grid(row=main_row_ind, column=0, sticky = W+N, pady=3, padx=(70, 3))
 buttons.append(predict_btn)
 
 def view_predict_clicked():
+    make_predict_file(calibrator_file_name.get(), calibrator_nametag.get(), sourcedb_output.get())
     if os.path.exists(os.getcwd() + "/predict.parset"):
         try:
             # Run NDPPP applycal.parset here
@@ -887,6 +882,7 @@ applycal_btn.grid(row=main_row_ind, column=0, sticky = W+N, pady=3, padx=(70, 3)
 buttons.append(applycal_btn)
 
 def view_applycal_clicked():
+    make_applycal_file(MS_file_name.get(), calibrator_file_name.get())
     if os.path.exists(os.getcwd() + "/applycal.parset"):
         try:
             # Run NDPPP applycal.parset here
@@ -906,6 +902,7 @@ applybeam_btn.grid(row=main_row_ind, column=0, sticky = W+N, pady=3, padx=(70, 3
 buttons.append(applybeam_btn)
 
 def view_applybeam_clicked():
+    make_applybeam_file(MS_file_name.get())
     if os.path.exists(os.getcwd() + "/applybeam.parset"):
         try:
             # Run NDPPP applycal.parset here
@@ -968,4 +965,3 @@ def on_closing():
 root.protocol("WM_DELETE_WINDOW", on_closing)
 
 root.mainloop()
-
