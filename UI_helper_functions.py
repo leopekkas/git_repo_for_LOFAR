@@ -8,15 +8,11 @@ def proceed_warning_message(titletext, text):
     return warningboxresult
 
 def writeToInfoFeed(line, info_text):
-    info_text.config(state='normal')
     info_text.insert('end', line + "\n")
-    info_text.config(state='disabled')
     info_text.see('end')
 
 def writeToInfoFeedNoLinebreak(line, info_text):
-    info_text.config(state='normal')
     info_text.insert('end', line)
-    info_text.config(state='disabled')
     info_text.see('end')
 
 def disableButtons(buttons):
@@ -80,7 +76,7 @@ def setUpTerminalLog(right_bottom_frame, main_font, frame_color):
     logscrollbar = Scrollbar(right_bottom_frame)
     logscrollbar.grid(row=1, column=1, padx=2, pady=(0, 5), sticky=N+S)
 
-    text_log = Text(right_bottom_frame, height=18, width=55, yscrollcommand=logscrollbar.set, state="disabled", font=("Courier", font_size))
+    text_log = Text(right_bottom_frame, height=18, width=55, yscrollcommand=logscrollbar.set, state="normal", font=("Courier", font_size))
     logscrollbar.config(command=text_log.yview)
     text_log.grid(row=1, column=0, padx=(5, 0), pady=(0, 5), sticky=N+S+E+W)
     old_stdout = sys.stdout
@@ -104,7 +100,7 @@ def setUpInformationLog(right_frame, main_font, frame_color):
     yscrollbar = Scrollbar(right_frame)
     yscrollbar.grid(row=1, column=4, padx=2, pady=5, sticky=N+S)
 
-    info_text = Text(right_frame, height=30, width=65, yscrollcommand=yscrollbar.set, state="disabled", font=("Courier", font_size))
+    info_text = Text(right_frame, height=30, width=65, yscrollcommand=yscrollbar.set, state="normal", font=("Courier", font_size))
     yscrollbar.config(command=info_text.yview)
     info_text.grid(row=1, column=0, columnspan=4, padx=(5, 0), pady=5, sticky=N+S+E+W)
 
@@ -214,3 +210,4 @@ def make_info_buttons(frame, row_ind, root):
     row_ind+=1
     video_info_btn = info_button_factory(frame, root, "Choose multiple .fits files with [ctrl + click] for plotting into an mp4 file\n (Work in progress)")
     video_info_btn.grid(row=row_ind, column=0, columnspan=2, padx=(303, 0), pady=3, sticky=W+S)
+

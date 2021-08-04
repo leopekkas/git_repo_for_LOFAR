@@ -153,8 +153,6 @@ def print_config(filename, textfield):
         textfield.insert('end', "No configuration file with the name \"" + os.path.basename(filename) + "\" found \n")
 
     textfield.insert('end', "\n")
-
-    textfield.config(state='disabled')
     textfield.see('end')
 
 def print_sourcedb(filename, textfield):
@@ -173,8 +171,6 @@ def print_sourcedb(filename, textfield):
         textfield.insert('end', "No sourcedb file with the name \"" + os.path.basename(filename) + "\" found \n")
 
     textfield.insert('end', "\n")
-
-    textfield.config(state='disabled')
     textfield.see('end')
 
 def print_parset(filename, textfield):
@@ -189,8 +185,6 @@ def print_parset(filename, textfield):
     file.close()
 
     textfield.insert('end', "\n")
-
-    textfield.config(state='disabled')
     textfield.see('end')
 
 def make_predict_file(msin, source, source_db):
