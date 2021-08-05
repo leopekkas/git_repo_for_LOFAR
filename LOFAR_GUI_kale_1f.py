@@ -341,13 +341,19 @@ root.rowconfigure(1, weight=1)
 main_row_ind = -1
 
 # The "Left" side of the main window
-left_frame = Frame(root, width=920, height=frame_height, bg=frame_color)
+left_frame = Frame(root, width=620, height=frame_height, bg=frame_color)
 left_frame.grid(row=0, column=0, columnspan=1, rowspan=2, sticky=W+S+E+N, padx=(4, 2), pady=4)
 left_frame.grid_propagate(False)
 
+# Ties the "View" and "Change" buttons together
+left_frame.columnconfigure(0, weight=0)
+left_frame.columnconfigure(1, weight=0)
+left_frame.columnconfigure(2, weight=0)
+left_frame.columnconfigure(3, weight=0)
+
 lofar_title = Label(left_frame, text="LOFAR Imaging Tool", font=(main_font, 22, "bold"), bg=frame_color)
 main_row_ind += 1
-lofar_title.grid(row=main_row_ind, column=0, columnspan=3, sticky=W+N, pady=(60, 45), padx=(50, 5))
+lofar_title.grid(row=main_row_ind, column=0, columnspan=3, sticky=W+N, pady=(40, 35), padx=(50, 5))
 
 # The "Right" side of the main window
 right_frame = Frame(root, height=750, background=frame_color)
@@ -398,8 +404,8 @@ menubar.add_cascade(label="Help", menu=helpmenu)
 
 root.config(menu=menubar)
 
-view_column=2
-view_width=6
+view_column=1
+view_width=5
 
 # Displaying the files we're working on
 
@@ -435,23 +441,23 @@ def change_input_skymodel():
 
 
 skymodel_input_label = Label(left_frame, text="Sky model: ", font=(main_font, 11), bg=frame_color)
-skymodel_input_name_label = Label(left_frame, textvariable=skymodel_input, font=(secondary_font, 11), bg=frame_color)
 main_row_ind += 1
-skymodel_input_label.grid(row=main_row_ind, column=0, sticky = W + N, pady=5, padx=(80, 5))
-skymodel_input_name_label.grid(row=main_row_ind, column=1, sticky = W + N, pady=4, padx=(1, 5))
+skymodel_input_label.grid(row=main_row_ind, column=0, sticky = W + N, pady=(5, 0), padx=(80, 5))
 
 view_skymodel_btn = Button(left_frame, text="View", command=skymodel_contents, width=view_width)
-view_skymodel_btn.grid(row=main_row_ind, column=view_column, padx=1, pady=(0,5))
-change_skymodel_btn = Button(left_frame, text="Change", command=change_input_skymodel)
-change_skymodel_btn.grid(row=main_row_ind, column=view_column+1, padx=1, pady=(2,5), sticky = W)
+view_skymodel_btn.grid(row=main_row_ind, column=view_column + 1, padx=1, pady=(0,0), sticky=W)
+change_skymodel_btn = Button(left_frame, text="Load", command=change_input_skymodel, width=view_width)
+change_skymodel_btn.grid(row=main_row_ind, column=view_column, padx=1, pady=(0,0), sticky = W)
+
+skymodel_input_name_label = Label(left_frame, textvariable=skymodel_input, font=(secondary_font, 11), bg=frame_color)
+main_row_ind += 1
+skymodel_input_name_label.grid(row=main_row_ind, column=0, columnspan=3, sticky = W + N, pady=(0, 5), padx=(80, 5))
 
 # Change/View the calibrator .MS file
 
 calibrator_file_label = Label(left_frame, text="Calibrator measurement set: ", font=(main_font, 11), bg=frame_color)
-calibrator_file_name_label = Label(left_frame, textvariable=calibrator_file_name, font=(secondary_font, 11), bg=frame_color)
 main_row_ind+=1
-calibrator_file_label.grid(row=main_row_ind, column=0, sticky = W + N, pady=5, padx=(80, 0))
-calibrator_file_name_label.grid(row=main_row_ind, column=1, sticky = W + N, pady=5, padx=(1, 5))
+calibrator_file_label.grid(row=main_row_ind, column=0, sticky = W + N, pady=(5, 0), padx=(80, 0))
 
 def view_calibrator_clicked():
     disableButtons(buttons)
@@ -473,7 +479,7 @@ def view_calibrator_clicked():
         enableButtons(buttons)
 
 view_calibrator_btn = Button(left_frame, text="View", command=view_calibrator_clicked, width=view_width)
-view_calibrator_btn.grid(row=main_row_ind, column=view_column, padx=1, pady=(2,5))
+view_calibrator_btn.grid(row=main_row_ind, column=view_column + 1, padx=1, pady=(2,0), sticky=W)
 
 change_open = BooleanVar(root, False)
 
@@ -482,13 +488,13 @@ def change_calibrator(index, MS_input_string):
         change_open.set(True)
         calibrator_id_entry_feed = Entry(left_frame, text=" Calibrator ID", font=(main_font, 11), width=8)
         calibrator_id_entry_feed.delete(0, 'end')
-        calibrator_id_entry_feed.grid(row=index, column=2, padx=(2, 1), pady=(2,5))
+        calibrator_id_entry_feed.grid(row=index, column=2, padx=(2, 1), pady=(4,5), sticky=W)
         calibrator_id_entry_feed.insert(0, "ID:")
         calibrator_id_entry_feed.config(fg='grey')
 
         calibrator_SB_entry_feed = Entry(left_frame, text="Calibrator Subband", font=(main_font, 11), width=7)
         calibrator_SB_entry_feed.delete(0, 'end')
-        calibrator_SB_entry_feed.grid(row=index, column=3, padx=(0, 4), pady=(2,5))
+        calibrator_SB_entry_feed.grid(row=index, column=3, padx=(0, 4), pady=(4,5), sticky=W)
         calibrator_SB_entry_feed.insert(0, "Subband:")
         calibrator_SB_entry_feed.config(fg='grey')
 
@@ -567,20 +573,22 @@ def change_calibrator(index, MS_input_string):
     else:
         writeToInfoFeed("Press enter to close the change window\n", info_text)
 
-change_calibrator_btn = Button(left_frame, text="Change", command= lambda: change_calibrator(9, MS_input_variable.get()))
-change_calibrator_btn.grid(row=main_row_ind, column=view_column+1, padx=(5, 5), pady=(2,5))
+change_calibrator_btn = Button(left_frame, text="Load", command= lambda: change_calibrator(7, MS_input_variable.get()), width=view_width)
+change_calibrator_btn.grid(row=main_row_ind, column=view_column, padx=1, pady=(2,0))
 
 buttons.append(view_calibrator_btn)
 buttons.append(change_calibrator_btn)
+
+calibrator_file_name_label = Label(left_frame, textvariable=calibrator_file_name, font=(secondary_font, 11), bg=frame_color)
+main_row_ind += 1
+calibrator_file_name_label.grid(row=main_row_ind, column=0, columnspan=3, sticky = W + N, pady=(0, 5), padx=(80, 5))
 
 #############################################
 # Change/View .MS file
 
 MS_file_label = Label(left_frame, text="Solar MS: ", font=(main_font, 11), bg=frame_color)
-MS_file_name_label = Label(left_frame, textvariable=MS_file_name, font=(secondary_font, 11), bg=frame_color)
 main_row_ind+=1
-MS_file_label.grid(row=main_row_ind, column=0, sticky = W + N, pady=5, padx=(80, 0))
-MS_file_name_label.grid(row=main_row_ind, column=1, sticky = W + N, pady=5, padx=(1, 5))
+MS_file_label.grid(row=main_row_ind, column=0, sticky = W + N, pady=(5, 0), padx=(80, 0))
 
 def view_MS_clicked():
     disableButtons(buttons)
@@ -604,7 +612,7 @@ def view_MS_clicked():
         enableButtons(buttons)
 
 view_MS_btn = Button(left_frame, text="View", command=view_MS_clicked, width=view_width)
-view_MS_btn.grid(row=main_row_ind, column=view_column, padx=1, pady=(2,5))
+view_MS_btn.grid(row=main_row_ind, column=view_column + 1, padx=1, pady=(2,0), sticky=W)
 
 buttons.append(view_MS_btn)
 
@@ -615,13 +623,13 @@ def change_MS(index, MS_input_string):
         change_MS_open.set(True)
         MS_id_entry_feed = Entry(left_frame, text="Solar MS ID", font=(main_font, 11), width=8)
         MS_id_entry_feed.delete(0, 'end')
-        MS_id_entry_feed.grid(row=index, column=2, padx=(2, 1), pady=(2,5))
+        MS_id_entry_feed.grid(row=index, column=2, padx=(2, 1), pady=(4,5), sticky=W)
         MS_id_entry_feed.insert(0, "ID:")
         MS_id_entry_feed.config(fg='grey')
 
         MS_SB_entry_feed = Entry(left_frame, text="Solar MS Subband", font=(main_font, 11), width=7)
         MS_SB_entry_feed.delete(0, 'end')
-        MS_SB_entry_feed.grid(row=index, column=3, padx=(0, 4), pady=(2,5))
+        MS_SB_entry_feed.grid(row=index, column=3, padx=(0, 4), pady=(4,5), sticky=W)
         MS_SB_entry_feed.insert(0, "Subband:")
         MS_SB_entry_feed.config(fg='grey')
 
@@ -701,32 +709,16 @@ def change_MS(index, MS_input_string):
     else:
         writeToInfoFeed("Press enter to close the change MS window\n", info_text)
 
-change_MS_btn = Button(left_frame, text="Change", command= lambda: change_MS(5, MS_input_variable.get()))
-change_MS_btn.grid(row=main_row_ind, column=view_column+1, padx=(5, 5), pady=(2,5))
+change_MS_btn = Button(left_frame, text="Load", command= lambda: change_MS(7, MS_input_variable.get()), width=view_width)
+change_MS_btn.grid(row=main_row_ind, column=view_column, padx=1, pady=(2,0))
+
+MS_file_name_label = Label(left_frame, textvariable=MS_file_name, font=(secondary_font, 11), bg=frame_color)
+main_row_ind += 1
+MS_file_name_label.grid(row=main_row_ind, column=0, columnspan=3, sticky = W + N, pady=(0, 5), padx=(80, 5))
 
 buttons.append(change_MS_btn)
 
 ########################################
-
-# Change config files
-def change_config():
-    filename = filedialog.askopenfilename(initialdir = os.getcwd(),
-                                            title="Select a file",
-                                            filetypes = (("Text files", "*.txt"),
-                                                        ("all files", "*")))
-
-    if not filename:
-        writeToInfoFeed("Change the config file: No file chosen \n", info_text)
-    else:
-        config_file_path.set(filename)
-
-        filename = os.path.basename(filename)
-
-        config_file_name.set(filename)
-        config_file_name_label.update()
-
-change_config_btn = Button(left_frame, text="Change", command=change_config)
-change_config_btn.grid(row=main_row_ind, column=view_column+1, padx=1, pady=(2,5))
 
 main_row_ind += 1
 main_row_ind += 1
@@ -747,7 +739,7 @@ calibrator_nametag_entry.config(fg='grey')
 
 main_row_ind+=1
 calibrator_nametag_label.grid(row=main_row_ind, column=0, sticky = W + N, pady=5, padx=(80, 5))
-calibrator_nametag_entry.grid(row=main_row_ind, column=2, columnspan=2, sticky = W+N, pady=4, padx=(0, 5))
+calibrator_nametag_entry.grid(row=main_row_ind, column=1, columnspan=3, sticky = W+N, pady=4, padx=(0, 5))
 
 def handle_focus_in_nametag(_):
     calibrator_nametag_entry.delete(0, 'end')
@@ -778,7 +770,7 @@ sourcedb_output_label.grid(row=main_row_ind, column=0, sticky = W + N, pady=5, p
 sourcedb_output_entry = Entry(left_frame, text="Ateam_LBA_CC.sourcedb", font=(main_font, 11), width=20)
 sourcedb_output_entry.insert(0, sourcedb_output.get())
 sourcedb_output_entry.config(fg='grey')
-sourcedb_output_entry.grid(row=main_row_ind, column=1, columnspan=2, sticky = W+N, pady=4, padx=(0, 5))
+sourcedb_output_entry.grid(row=main_row_ind, column=1, columnspan=3 sticky = W+N, pady=4, padx=(0, 5))
 
 def handle_focus_in_sourcedb(_):
     sourcedb_output_entry.delete(0, 'end')
@@ -804,7 +796,7 @@ sourcedb_output_entry.bind("<Return>", handle_enter_sourcedb)
 
 col2_row_ind = main_row_ind
 
-commands_btn_width=28
+commands_btn_width=23
 
 command_btns_index = main_row_ind
 
@@ -826,9 +818,15 @@ def view_predict_clicked():
     else:
         print("Error, no predict.parset found in the working directory \n")
 
-view_predict_btn = Button(left_frame, text="View", command=view_predict_clicked, width=3)
-view_predict_btn.grid(row=main_row_ind, column=1, sticky = W+N, pady=3, padx=(0, 5))
+view_predict_btn = Button(left_frame, text="View", command=view_predict_clicked, width=view_width)
+view_predict_btn.grid(row=main_row_ind, column=1, sticky = W+N, pady=3, padx=1, sticky=W)
 buttons.append(view_predict_btn)
+
+def kill_predict_clicked():
+    x = 0
+
+kill_predict_btn = Button(left_frame, text="Kill", command=kill_predict_clicked, width=view_width)
+kill_predict_btn.grid(row=main_row_ind, column=2, sticky = W, pady=3, padx=(0, 1))
 
 applycal_btn = Button(left_frame, text="NDPPP applycal.parset", command=applycal_clicked, width=commands_btn_width)
 main_row_ind += 1
@@ -846,9 +844,15 @@ def view_applycal_clicked():
     else:
         print("Error, no applycal.parset found in the working directory \n")
 
-view_applycal_btn = Button(left_frame, text="View", command=view_applycal_clicked, width=3)
-view_applycal_btn.grid(row=main_row_ind, column=1, sticky = W+N, pady=3, padx=(0, 5))
+view_applycal_btn = Button(left_frame, text="View", command=view_applycal_clicked, width=view_width)
+view_applycal_btn.grid(row=main_row_ind, column=1, sticky = W+N, pady=3, padx=1
 buttons.append(view_applycal_btn)
+
+def kill_applycal_clicked():
+    x = 0
+
+kill_applycal_btn = Button(left_frame, text="Kill", command=kill_applycal_clicked, width=view_width)
+kill_applycal_btn.grid(row=main_row_ind, column=2, sticky = W, pady=3, padx=(0, 1))
 
 applybeam_btn = Button(left_frame, text="NDPPP applybeam.parset", command=applybeam_clicked, width=commands_btn_width)
 main_row_ind += 1
@@ -866,9 +870,15 @@ def view_applybeam_clicked():
     else:
         print("Error, no applybeam.parset found in the working directory \n")
 
-view_applybeam_btn = Button(left_frame, text="View", command=view_applybeam_clicked, width=3)
-view_applybeam_btn.grid(row=main_row_ind, column=1, sticky = W+N, pady=3, padx=(0, 5))
+view_applybeam_btn = Button(left_frame, text="View", command=view_applybeam_clicked, width=view_width)
+view_applybeam_btn.grid(row=main_row_ind, column=1, sticky = W+N, pady=3, padx=1
 buttons.append(view_applybeam_btn)
+
+def kill_applybeam_clicked():
+    x = 0
+
+kill_applybeam_btn = Button(left_frame, text="Kill", command=kill_applybeam_clicked, width=view_width)
+kill_applybeam_btn.grid(row=main_row_ind, column=2, sticky = W, pady=3, padx=(0, 1))
 
 #######################################
 
@@ -880,17 +890,41 @@ main_row_ind += 1
 imaging_title.grid(row=main_row_ind, column=0, columnspan=2, sticky = W + N, pady=(25, 5), padx=(80, 5))
 
 config_file_label = Label(left_frame, text="Configuration file: ", font=(main_font, 11), bg=frame_color)
-config_file_name_label = Label(left_frame, textvariable=config_file_name, font=(secondary_font, 11), bg=frame_color)
 main_row_ind+=1
-config_file_label.grid(row=main_row_ind, column=0, sticky = W + N, pady=5, padx=(80, 5))
-config_file_name_label.grid(row=main_row_ind, column=1, sticky = W + N, pady=5, padx=(2, 5))
+config_file_label.grid(row=main_row_ind, column=0, sticky = W + N, pady=(5,0), padx=(80, 5))
+
+# Change config files
+def change_config():
+    filename = filedialog.askopenfilename(initialdir = os.getcwd(),
+                                            title="Select a file",
+                                            filetypes = (("Text files", "*.txt"),
+                                                        ("all files", "*")))
+
+    if not filename:
+        writeToInfoFeed("Change the config file: No file chosen \n", info_text)
+    else:
+        config_file_path.set(filename)
+
+        filename = os.path.basename(filename)
+
+        config_file_name.set(filename)
+        config_file_name_label.update()
+
+change_config_btn = Button(left_frame, text="Load", command=change_config, width=view_width)
+change_config_btn.grid(row=main_row_ind, column=view_column, padx=1, pady=(2,0))
 
 # View file contents buttons
 def config_contents():
     print_config(config_file_path.get(), info_text)
 
 view_config_btn = Button(left_frame, text="View", command=config_contents, width=view_width)
-view_config_btn.grid(row=main_row_ind, column=view_column, padx=(10, 5), pady=(2,5))
+view_config_btn.grid(row=main_row_ind, column=view_column + 1, padx=1, pady=(2,0), sticky=W)
+
+buttons.append(view_config_btn)
+
+config_file_name_label = Label(left_frame, textvariable=config_file_name, font=(secondary_font, 11), bg=frame_color)
+main_row_ind+=1
+config_file_name_label.grid(row=main_row_ind, column=0, columnspan=2, sticky = W + N, pady=(0, 5), padx=(0, 5))
 
 #####################################
 
@@ -922,8 +956,8 @@ def view_wsclean_clicked():
     for x in range(len(wscommands)):
         print(wscommands[x]),
 
-view_wsclean_btn = Button(left_frame, text="View", command=view_wsclean_clicked, width=3)
-view_wsclean_btn.grid(row=main_row_ind, column=1, sticky = W+N, pady=3, padx=(0, 5))
+view_wsclean_btn = Button(left_frame, text="View", command=view_wsclean_clicked, width=view_width)
+view_wsclean_btn.grid(row=main_row_ind, column=1, sticky = W+N, pady=3, padx=1, sticky=W)
 buttons.append(view_wsclean_btn)
 
 # Plotting and visualization
@@ -934,21 +968,23 @@ visualization_label.grid(row=main_row_ind, column=0, columnspan=2, sticky = W + 
 
 # View single .fits file
 
-fits_file_label = Label(left_frame, text=".fits file: ", font=(main_font, 11), bg=frame_color)
-fits_file_name_label = Label(left_frame, textvariable=fits_file_name, font=(secondary_font, 11), bg=frame_color)
+fits_file_label = Label(left_frame, text="Plotting FITS: ", font=(main_font, 11), bg=frame_color)
 main_row_ind+=1
-fits_file_label.grid(row=main_row_ind, column=0, sticky = W + N, pady=5, padx=(80, 0))
-fits_file_name_label.grid(row=main_row_ind, column=1, sticky = W + N, pady=5, padx=(1, 5))
+fits_file_label.grid(row=main_row_ind, column=0, sticky = W + N, pady=(5, 0), padx=(80, 0))
 
 def plot_clicked():
     print("Plotted a file called: " + fits_file_name.get() + "\n")
     plot_single_fits(fits_file_path.get())
 
-change_fits_btn = Button(left_frame, text="Load", command=change_fits)
-change_fits_btn.grid(row=main_row_ind, column=view_column, padx=(0, 5), pady=(2,5), sticky = W)
+change_fits_btn = Button(left_frame, text="Load", command=change_fits, width=view_width)
+change_fits_btn.grid(row=main_row_ind, column=view_column, padx=(0, 5), pady=(2,0), sticky = W)
 
 view_fits_btn = Button(left_frame, text="View", command=plot_clicked, width=view_width)
-view_fits_btn.grid(row=main_row_ind, column=view_column + 1, padx=1, pady=(2,5))
+view_fits_btn.grid(row=main_row_ind, column=view_column + 1, padx=1, pady=(2,0), sticky=W)
+
+fits_file_name_label = Label(left_frame, textvariable=fits_file_name, font=(secondary_font, 11), bg=frame_color)
+main_row_ind+=1
+fits_file_name_label.grid(row=main_row_ind, column=0, columnspan=3, sticky = W + N, pady=(0, 5), padx=(80, 5))
 
 buttons.append(view_fits_btn)
 buttons.append(change_fits_btn)

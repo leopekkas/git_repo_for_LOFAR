@@ -184,15 +184,15 @@ def make_info_buttons(frame, row_ind, root):
     row_ind+=1
     # Note, the padx/columnspan is a hacky solution but works for now
     predict_parset_info_btn = info_button_factory(frame, root, "Runs NDPPP predict.parset")
-    predict_parset_info_btn.grid(row=row_ind, column=1, columnspan=2, padx=(57, 0), pady=3, sticky=W+S)
+    predict_parset_info_btn.grid(row=row_ind, column=3, padx=(2, 0), pady=3, sticky=W+S)
 
     row_ind+=1
     applycal_parset_info_btn = info_button_factory(frame, root, "Applies the calibrator and produces\na CORR_NO_BEAM column into the solar MS")
-    applycal_parset_info_btn.grid(row=row_ind, column=1, columnspan=2, padx=(57, 0), pady=3, sticky=W+S)
+    applycal_parset_info_btn.grid(row=row_ind, column=3, padx=(2, 0), pady=3, sticky=W+S)
 
     row_ind+=1
     applybeam_parset_info_btn = info_button_factory(frame, root, "Applies the telescope beam(?) into the Solar MS\n and produces a CORRECTED_DATA column into it")
-    applybeam_parset_info_btn.grid(row=row_ind, column=1, columnspan=2, padx=(57, 0), pady=3, sticky=W+S)
+    applybeam_parset_info_btn.grid(row=row_ind, column=3, padx=(2, 0), pady=3, sticky=W+S)
 
     row_ind+=1
     wsclean_info_btn = info_button_factory(frame, root, "Produces .fits files from the MS\naccording to the configuration file")
