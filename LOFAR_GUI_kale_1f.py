@@ -488,13 +488,13 @@ def change_calibrator(index, MS_input_string):
         change_open.set(True)
         calibrator_id_entry_feed = Entry(left_frame, text=" Calibrator ID", font=(main_font, 11), width=8)
         calibrator_id_entry_feed.delete(0, 'end')
-        calibrator_id_entry_feed.grid(row=index, column=2, padx=(2, 1), pady=(4,5), sticky=W)
+        calibrator_id_entry_feed.grid(row=index, column=1, padx=(2, 1), pady=(4,5), sticky=W)
         calibrator_id_entry_feed.insert(0, "ID:")
         calibrator_id_entry_feed.config(fg='grey')
 
         calibrator_SB_entry_feed = Entry(left_frame, text="Calibrator Subband", font=(main_font, 11), width=7)
         calibrator_SB_entry_feed.delete(0, 'end')
-        calibrator_SB_entry_feed.grid(row=index, column=3, padx=(0, 4), pady=(4,5), sticky=W)
+        calibrator_SB_entry_feed.grid(row=index, column=2, padx=(0, 4), pady=(4,5), sticky=W)
         calibrator_SB_entry_feed.insert(0, "Subband:")
         calibrator_SB_entry_feed.config(fg='grey')
 
@@ -542,7 +542,7 @@ def change_calibrator(index, MS_input_string):
             calibrator_SB_entry_feed.grid_remove()
             calibrator_id_entry_feed.grid_remove()
             calibrator_id_entry_feed.config(width=16)
-            calibrator_id_entry_feed.grid(row=index, column=2, columnspan=2, padx=(5, 5), pady=(2,5))
+            calibrator_id_entry_feed.grid(row=index, column=1, columnspan=2, padx=(5, 5), pady=(2,5))
             calibrator_id_entry_feed.delete(0, 'end')
             calibrator_id_entry_feed.insert(0, "MS file name:")
 
@@ -558,7 +558,7 @@ def change_calibrator(index, MS_input_string):
             calibrator_SB_entry_feed.grid_remove()
             calibrator_id_entry_feed.grid_remove()
             calibrator_id_entry_feed.config(width=16)
-            calibrator_id_entry_feed.grid(row=index, column=2, columnspan=2, padx=(5, 5), pady=(2,5))
+            calibrator_id_entry_feed.grid(row=index, column=1, columnspan=2, padx=(5, 5), pady=(2,5))
             calibrator_id_entry_feed.delete(0, 'end')
             calibrator_id_entry_feed.insert(0, "MS file name:")
 
@@ -573,7 +573,7 @@ def change_calibrator(index, MS_input_string):
     else:
         writeToInfoFeed("Press enter to close the change window\n", info_text)
 
-change_calibrator_btn = Button(left_frame, text="Load", command= lambda: change_calibrator(7, MS_input_variable.get()), width=view_width)
+change_calibrator_btn = Button(left_frame, text="Load", command= lambda: change_calibrator(5, MS_input_variable.get()), width=view_width)
 change_calibrator_btn.grid(row=main_row_ind, column=view_column, padx=1, pady=(2,0))
 
 buttons.append(view_calibrator_btn)
@@ -623,13 +623,13 @@ def change_MS(index, MS_input_string):
         change_MS_open.set(True)
         MS_id_entry_feed = Entry(left_frame, text="Solar MS ID", font=(main_font, 11), width=8)
         MS_id_entry_feed.delete(0, 'end')
-        MS_id_entry_feed.grid(row=index, column=2, padx=(2, 1), pady=(4,5), sticky=W)
+        MS_id_entry_feed.grid(row=index, column=1, padx=(2, 1), pady=(4,5), sticky=W)
         MS_id_entry_feed.insert(0, "ID:")
         MS_id_entry_feed.config(fg='grey')
 
         MS_SB_entry_feed = Entry(left_frame, text="Solar MS Subband", font=(main_font, 11), width=7)
         MS_SB_entry_feed.delete(0, 'end')
-        MS_SB_entry_feed.grid(row=index, column=3, padx=(0, 4), pady=(4,5), sticky=W)
+        MS_SB_entry_feed.grid(row=index, column=2, padx=(0, 4), pady=(4,5), sticky=W)
         MS_SB_entry_feed.insert(0, "Subband:")
         MS_SB_entry_feed.config(fg='grey')
 
@@ -678,7 +678,7 @@ def change_MS(index, MS_input_string):
             MS_SB_entry_feed.grid_remove()
             MS_id_entry_feed.grid_remove()
             MS_id_entry_feed.config(width=16)
-            MS_id_entry_feed.grid(row=index, column=2, columnspan=2, padx=(5, 5), pady=(2,5))
+            MS_id_entry_feed.grid(row=index, column=1, columnspan=2, padx=(5, 5), pady=(2,5))
             MS_id_entry_feed.delete(0, 'end')
             MS_id_entry_feed.insert(0, "MS file name:")
 
@@ -694,7 +694,7 @@ def change_MS(index, MS_input_string):
             MS_SB_entry_feed.grid_remove()
             MS_id_entry_feed.grid_remove()
             MS_id_entry_feed.config(width=16)
-            MS_id_entry_feed.grid(row=index, column=2, columnspan=2, padx=(5, 5), pady=(2,5))
+            MS_id_entry_feed.grid(row=index, column=1, columnspan=2, padx=(5, 5), pady=(2,5))
             MS_id_entry_feed.delete(0, 'end')
             MS_id_entry_feed.insert(0, "MS file name:")
 
@@ -770,7 +770,7 @@ sourcedb_output_label.grid(row=main_row_ind, column=0, sticky = W + N, pady=5, p
 sourcedb_output_entry = Entry(left_frame, text="Ateam_LBA_CC.sourcedb", font=(main_font, 11), width=20)
 sourcedb_output_entry.insert(0, sourcedb_output.get())
 sourcedb_output_entry.config(fg='grey')
-sourcedb_output_entry.grid(row=main_row_ind, column=1, columnspan=3 sticky = W+N, pady=4, padx=(0, 5))
+sourcedb_output_entry.grid(row=main_row_ind, column=1, columnspan=3, sticky = W+N, pady=4, padx=(0, 5))
 
 def handle_focus_in_sourcedb(_):
     sourcedb_output_entry.delete(0, 'end')
@@ -819,7 +819,7 @@ def view_predict_clicked():
         print("Error, no predict.parset found in the working directory \n")
 
 view_predict_btn = Button(left_frame, text="View", command=view_predict_clicked, width=view_width)
-view_predict_btn.grid(row=main_row_ind, column=1, sticky = W+N, pady=3, padx=1, sticky=W)
+view_predict_btn.grid(row=main_row_ind, column=1, sticky = W+N, pady=3, padx=1)
 buttons.append(view_predict_btn)
 
 def kill_predict_clicked():
@@ -845,7 +845,7 @@ def view_applycal_clicked():
         print("Error, no applycal.parset found in the working directory \n")
 
 view_applycal_btn = Button(left_frame, text="View", command=view_applycal_clicked, width=view_width)
-view_applycal_btn.grid(row=main_row_ind, column=1, sticky = W+N, pady=3, padx=1
+view_applycal_btn.grid(row=main_row_ind, column=1, sticky = W+N, pady=3, padx=1)
 buttons.append(view_applycal_btn)
 
 def kill_applycal_clicked():
@@ -871,7 +871,7 @@ def view_applybeam_clicked():
         print("Error, no applybeam.parset found in the working directory \n")
 
 view_applybeam_btn = Button(left_frame, text="View", command=view_applybeam_clicked, width=view_width)
-view_applybeam_btn.grid(row=main_row_ind, column=1, sticky = W+N, pady=3, padx=1
+view_applybeam_btn.grid(row=main_row_ind, column=1, sticky = W+N, pady=3, padx=1)
 buttons.append(view_applybeam_btn)
 
 def kill_applybeam_clicked():
@@ -924,7 +924,7 @@ buttons.append(view_config_btn)
 
 config_file_name_label = Label(left_frame, textvariable=config_file_name, font=(secondary_font, 11), bg=frame_color)
 main_row_ind+=1
-config_file_name_label.grid(row=main_row_ind, column=0, columnspan=2, sticky = W + N, pady=(0, 5), padx=(0, 5))
+config_file_name_label.grid(row=main_row_ind, column=0, columnspan=2, sticky = W + N, pady=(0, 5), padx=(80, 5))
 
 #####################################
 
@@ -957,7 +957,7 @@ def view_wsclean_clicked():
         print(wscommands[x]),
 
 view_wsclean_btn = Button(left_frame, text="View", command=view_wsclean_clicked, width=view_width)
-view_wsclean_btn.grid(row=main_row_ind, column=1, sticky = W+N, pady=3, padx=1, sticky=W)
+view_wsclean_btn.grid(row=main_row_ind, column=1, sticky = W+N, pady=3, padx=1)
 buttons.append(view_wsclean_btn)
 
 # Plotting and visualization
