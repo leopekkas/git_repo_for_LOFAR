@@ -155,7 +155,7 @@ def print_config(filename, textfield):
     textfield.insert('end', "\n")
     textfield.see('end')
 
-def print_sourcedb(filename, textfield):
+def print_skymodel(filename, textfield):
     textfield.config(state='normal')
 
     try:

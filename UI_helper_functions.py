@@ -128,8 +128,8 @@ def setUpInformationLog(right_frame, main_font, frame_color):
                 info_text.tag_add('found', idx, lastidx)
                 idx = lastidx
 
-            info_text.see(lastidx)	
-            
+            info_text.see(lastidx)
+
             #mark located string as red
             info_text.tag_config('found', foreground='red')
 
@@ -196,18 +196,17 @@ def make_info_buttons(frame, row_ind, root):
 
     row_ind+=1
     wsclean_info_btn = info_button_factory(frame, root, "Produces .fits files from the MS\naccording to the configuration file")
-    wsclean_info_btn.grid(row=row_ind, column=1, columnspan=2, padx=(57, 0), pady=3, sticky=W+S)
+    #wsclean_info_btn.grid(row=row_ind, column=1, columnspan=2, padx=(57, 0), pady=3, sticky=W+S)
 
     row_ind+=1
     coordinate_info_btn = info_button_factory(frame, root, "Runs a coordinate transformation")
-    coordinate_info_btn.grid(row=row_ind, column=1, padx=0, pady=3, sticky=W+S)
+    #coordinate_info_btn.grid(row=row_ind, column=1, padx=0, pady=3, sticky=W+S)
 
     row_ind+=1
     row_ind+=1
     multiple_plot_info_btn = info_button_factory(frame, root, "Choose multiple .fits files with [ctrl + click] for plotting into png files")
-    multiple_plot_info_btn.grid(row=row_ind, column=0, columnspan=2, padx=(303, 0), pady=(10, 3), sticky=W+S)
+    #multiple_plot_info_btn.grid(row=row_ind, column=0, columnspan=2, padx=(303, 0), pady=(10, 3), sticky=W+S)
 
     row_ind+=1
     video_info_btn = info_button_factory(frame, root, "Choose multiple .fits files with [ctrl + click] for plotting into an mp4 file\n (Work in progress)")
-    video_info_btn.grid(row=row_ind, column=0, columnspan=2, padx=(303, 0), pady=3, sticky=W+S)
-
+    #video_info_btn.grid(row=row_ind, column=0, columnspan=2, padx=(303, 0), pady=3, sticky=W+S)
