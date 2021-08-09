@@ -9,6 +9,7 @@ def proceed_warning_message(titletext, text):
 
 def writeToInfoFeed(line, info_text):
     info_text.insert('end', line + "\n")
+    info_text.insert('end', "\n************************************************************\n\n")
     info_text.see('end')
 
 def writeToInfoFeedNoLinebreak(line, info_text):
@@ -41,7 +42,7 @@ def change_config_file_line(config_file_name, name, newVal):
             if (name + "=") in data[i]:
                 foundInd = i
             elif (name + " =") in data[i]:
-                foundInd = i        
+                foundInd = i
 
         # If we find the entry with a corresponding name, edit it
         # Otherwose make a new entry into the configuration file
@@ -77,11 +78,11 @@ def buildAnEntryBox(config_window, name, myvars, config_file_name):
         name_entry.insert(0, myvars[name][:-1])
 
     def handle_focus_in_name_entry(_):
-        name_entry.delete(0, 'end')
         name_entry.config(fg='black')
 
     def handle_focus_out_name_entry(_):
         name_entry.config(fg='grey')
+        name_entry.delete(0, "end")
         name_entry.insert(0, "No input found")
         if myvars.has_key(name):
             name_entry.delete(0, "end")
@@ -144,6 +145,7 @@ def setUpCheckbuttons(config_window, bool_vars, config_file_name):
     size1_entry = buildAnEntryBox(config_window, "size", myvars, config_file_name)
     size1_entry.grid(row=row_index, column=1, padx=(0, 10), sticky=W)
     row_index += 1
+    size2_label = Label(config_window, text="size (y):").grid(row=row_index, column=0, padx=(10, 2), pady=5, sticky=W)
     size2_entry = buildAnEntryBox(config_window, "size2", myvars, config_file_name)
     size2_entry.grid(row=row_index, column=1, padx=(0, 10), sticky=W)
 
@@ -192,6 +194,7 @@ def setUpCheckbuttons(config_window, bool_vars, config_file_name):
     start_entry = buildAnEntryBox(config_window, "start_time", myvars, config_file_name)
     start_entry.grid(row=row_index, column=4, padx=(0, 10), sticky=W)
     row_index += 1
+    interval_end_time = Label(config_window, text="Interval end:").grid(row=row_index, column=3, padx=(10, 2), pady=5, sticky=W)
     end_entry = buildAnEntryBox(config_window, "end_time", myvars, config_file_name)
     end_entry.grid(row=row_index, column=4, padx=(0, 10), sticky=W)
 
@@ -345,3 +348,56 @@ def make_info_buttons(frame, row_ind, root):
     row_ind+=1
     video_info_btn = info_button_factory(frame, root, "Choose multiple .fits files with [ctrl + click] for plotting into an mp4 file\n (Work in progress)")
     #video_info_btn.grid(row=row_ind, column=0, columnspan=2, padx=(303, 0), pady=3, sticky=W+S)
+
+def make_parset_entry(frame, name, value):
+    font = "Times"
+    name_entry = Entry(frame, text = name, font=(font, 11), width=10)
+    name_entry.config(fg='grey')
+    name_entry.delete(0, "end")
+    name_entry.insert(0, value.get())
+
+    def handle_focus_in_name_entry(_):
+        name_entry.config(fg='black')
+
+    def handle_focus_out_name_entry(_):
+        name_entry.config(fg='grey')
+        name_entry.delete(0,"end")
+        name_entry.insert(0, value.get())
+
+    def handle_enter_name_entry(txt):
+        value.set(name_entry.get())
+        name_entry.delete(0, "end")
+        handle_focus_out_name_entry("dummy")
+
+    name_entry.bind("<FocusIn>", handle_focus_in_name_entry)
+    name_entry.bind("<FocusOut>", handle_focus_out_name_entry)
+    name_entry.bind("<Return>", handle_enter_name_entry)
+
+    return name_entry
+
+def setUpPredictEntries(frame, msout, solint, calibrator, sourcedb, caltype, usebeammodel, onebeamperpatch):
+    row_index = 0
+    row_index += 1
+    msout_label = Label(frame, text="msout: ", font=("Times", 11)).grid(row=row_index, column=0, padx=5, pady=5, sticky=W)
+    msout_entry = make_predict_entry(frame, "msout", msout)
+    msout_entry.grid(row=row_index, column=1, padx=(0, 10), sticky=W)
+
+    row_index += 1
+    solint_label = Label(frame, text="Solution interval: ", font=("Times", 11)).grid(row=row_index, column=0, padx=5, pady=5, sticky=W)
+    solint_entry = make_predict_entry(frame, "solint", solint)
+    solint_entry.grid(row=row_index, column=1, padx=(0, 10), sticky=W)
+
+    row_index += 1
+    cal_label = Label(frame, text="Calibrator: ", font=("Times", 11)).grid(row=row_index, column=0, padx=5, pady=5, sticky=W)
+    cal_entry = make_predict_entry(frame, "calibrator", calibrator)
+    cal_entry.grid(row=row_index, column=1, padx=(0, 10), sticky=W)
+
+    row_index += 1
+    sourcedb_label = Label(frame, text="Sourcedb: ", font=("Times", 11)).grid(row=row_index, column=0, padx=5, pady=5, sticky=W)
+    sourcedb_entry = make_predict_entry(frame, "sourcedb", sourcedb)
+    sourcedb_entry.grid(row=row_index, column=1, padx=(0, 10), sticky=W)
+
+    row_index += 1
+    caltype_label = Label(frame, text="caltype: ", font=("Times", 11)).grid(row=row_index, column=0, padx=5, pady=5, sticky=W)
+    caltype_entry = make_predict_entry(frame, "caltype", caltype)
+    caltype_entry.grid(row=row_index, column=1, padx=(0, 10), sticky=W)

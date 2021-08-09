@@ -6,7 +6,7 @@ from Redirect import *
 from File_reader import read_config, print_config, make_predict_file, make_applycal_file, lines_in_wsclean
 from File_reader import make_applybeam_file, print_parset, make_sourcedb, print_skymodel, read_MS_info
 from fits_plotting_tool import save_fits, produce_video, icrs_to_helio, plot_single_fits
-from UI_helper_functions import disableButtons, enableButtons, setUpCheckbuttons, setUpTerminalLog, setUpInformationLog
+from UI_helper_functions import disableButtons, enableButtons, setUpCheckbuttons, setUpTerminalLog, setUpInformationLog, setUpPredictEntries
 from UI_helper_functions import writeToInfoFeed, writeToInfoFeedNoLinebreak, make_info_buttons, proceed_warning_message
 import os
 import sys
@@ -25,7 +25,7 @@ def predict_clicked():
     disableButtons(buttons)
     predict_btn.update()
 
-    make_predict_file(calibrator_file_name.get(), calibrator_nametag.get(), predict_sourcedb_output.get())
+    make_predict_file(calibrator_file_name.get(), predict_msout.get(), calibrator_nametag.get(), predict_sourcedb_output.get(), predict_solint.get(), predict_usebeammodel.get(), predict_onebeamperpatch.get(), predict_caltype.get())
 
     try:
         # Run NDPPP predict.parset here
@@ -43,7 +43,7 @@ def applycal_clicked():
     disableButtons(buttons)
     applycal_btn.update()
 
-    make_applycal_file(MS_file_name.get(), calibrator_file_name.get())
+    make_applycal_file(MS_file_name.get(), applycal_msout.get(), applycal_datacolumn_in.get(), applycal_datacolumn_out.get(), calibrator_file_name.get(), applycal_updateweights.get())
 
     try:
         # Run NDPPP applycal.parset here
@@ -61,7 +61,7 @@ def applybeam_clicked():
     disableButtons(buttons)
     applybeam_btn.update()
 
-    make_applybeam_file(MS_file_name.get())
+    make_applybeam_file(MS_file_name.get(), applybeam_msout.get(), applybeam_datacolumn_in.get(), applybeam_datacolumn_out.get(), applybeam_updateweights.get())
 
     try:
         # Run NDPPP applybeam.parset here
@@ -132,9 +132,25 @@ def video_clicked():
     except:
         writeToInfoFeed("No file(s) chosen \n", info_text)
 
+def manage_predict_clicked():
+    predict_main_window = Toplevel(root)
+    predict_main_window.title("predict.parset options")
+    predict_main_window.wm_attributes('-type', 'dialog')
+
+    top_frame = Frame(predict_main_window)
+    top_frame.grid(row=0, column=0, sticky=N, padx=5, pady=5)
+
+    predict_frame = Frame(predict_main_window)
+    predict_frame.grid(row=1, column=0, sticky=N+W, padx=5, pady=5)
+
+    predict_window_title = Label(top_frame, text="Options in predict.parset", font=(main_font, 13, "bold"))
+    predict_window_title.grid(row=0, column=0, padx=(20, 0), pady=20)
+
+    setUpPredictEntries(predict_frame, predict_msout, predict_solint, calibrator_nametag, predict_sourcedb_output, predict_caltype, predict_usebeammodel, predict_onebeamperpatch)
+
 def manage_config_clicked():
     config_main_window = Toplevel(root)
-    config_main_window.title("Options setup")
+    config_main_window.title("wsclean options")
     config_main_window.resizable(False, False)
 
     top_frame = Frame(config_main_window)
@@ -301,17 +317,21 @@ calibrator_nametag = StringVar(root, "VirA")
 predict_sourcedb_output = StringVar(root, "Ateam_LBA_CC.sourcedb")
 predict_caltype = StringVar(root, "diagonal")
 predict_onebeamperpatch = BooleanVar(root, True)
+predict_usebeammodel = BooleanVar(root, True)
+predict_msout = StringVar(root, ".")
 
 # Options included in the applycal.parset file
 applycal_datacolumn_in = StringVar(root, "DATA")
 applycal_datacolumn_out = StringVar(root, "CORR_NO_BEAM")
 applycal_parmdb = StringVar(root, "/instrument")
 applycal_updateweights = BooleanVar(root, True)
+applycal_msout = StringVar(root, ".")
 
 # Options included in the applybeam.parset file
 applybeam_datacolumn_in = StringVar(root, "CORR_NO_BEAM")
 applybeam_datacolumn_out = StringVar(root, "CORRECTED_DATA")
 applybeam_updateweights = BooleanVar(root, True)
+applybeam_msout = StringVar(root, ".")
 
 config_file_name = StringVar(root, "config")
 config_file_path = StringVar(root, "config")
@@ -826,7 +846,7 @@ predict_btn.grid(row=main_row_ind, column=0, sticky = W+N, pady=3, padx=(70, 3))
 buttons.append(predict_btn)
 
 def view_predict_clicked():
-    make_predict_file(calibrator_file_name.get(), calibrator_nametag.get(), predict_sourcedb_output.get())
+    make_predict_file(calibrator_file_name.get(), predict_msout.get(), calibrator_nametag.get(), predict_sourcedb_output.get(), predict_solint.get(), predict_usebeammodel.get(), predict_onebeamperpatch.get(), predict_caltype.get())
     if os.path.exists(os.getcwd() + "/predict.parset"):
         try:
             # Run NDPPP applycal.parset here
@@ -852,7 +872,7 @@ applycal_btn.grid(row=main_row_ind, column=0, sticky = W+N, pady=3, padx=(70, 3)
 buttons.append(applycal_btn)
 
 def view_applycal_clicked():
-    make_applycal_file(MS_file_name.get(), calibrator_file_name.get())
+    make_applycal_file(MS_file_name.get(), applycal_msout.get(), applycal_datacolumn_in.get(), applycal_datacolumn_out.get(), calibrator_file_name.get(), applycal_updateweights.get())
     if os.path.exists(os.getcwd() + "/applycal.parset"):
         try:
             # Run NDPPP applycal.parset here
@@ -878,7 +898,7 @@ applybeam_btn.grid(row=main_row_ind, column=0, sticky = W+N, pady=3, padx=(70, 3
 buttons.append(applybeam_btn)
 
 def view_applybeam_clicked():
-    make_applybeam_file(MS_file_name.get())
+    make_applybeam_file(MS_file_name.get(), applybeam_msout.get(), applybeam_datacolumn_in.get(), applybeam_datacolumn_out.get(), applybeam_updateweights.get())
     if os.path.exists(os.getcwd() + "/applybeam.parset"):
         try:
             # Run NDPPP applycal.parset here

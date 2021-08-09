@@ -149,11 +149,9 @@ def print_config(filename, textfield):
             textfield.insert('end', l)
 
         file.close()
+        writeToInfoFeed("", textfield)
     except IOError:
-        textfield.insert('end', "No configuration file with the name \"" + os.path.basename(filename) + "\" found \n")
-
-    textfield.insert('end', "\n")
-    textfield.see('end')
+        writeToInfoFeed("No configuration file with the name \"" + os.path.basename(filename) + "\" found", textfield)
 
 def print_skymodel(filename, textfield):
     textfield.config(state='normal')
@@ -166,46 +164,54 @@ def print_skymodel(filename, textfield):
             textfield.insert('end', l)
 
         file.close()
+        writeToInfoFeed("", textfield)
 
     except IOError:
-        textfield.insert('end', "No sourcedb file with the name \"" + os.path.basename(filename) + "\" found \n")
-
-    textfield.insert('end', "\n")
-    textfield.see('end')
+        writeToInfoFeed("No configuration file with the name \"" + os.path.basename(filename) + "\" found", textfield)
 
 def print_parset(filename, textfield):
     textfield.config(state='normal')
     textfield.insert('end', "The " + filename + " file contains the following lines: \n")
 
-    file = open(filename)
-    lines = [line for line in file.readlines() if line.strip()]
-    for l in lines:
-        textfield.insert('end', l)
+    try:
+        file = open(filename)
+        lines = [line for line in file.readlines() if line.strip()]
+        for l in lines:
+            textfield.insert('end', l)
 
-    file.close()
+        file.close()
+        writeToInfoFeed("", textfield)
+    except IOError:
+        writeToInfoFeed("No configuration file with the name \"" + os.path.basename(filename) + "\" found", textfield)
 
-    textfield.insert('end', "\n")
-    textfield.see('end')
-
-def make_predict_file(msin, source, source_db):
+def make_predict_file(msin, msout, source, source_db, solint, usebeammodel, onebeamperpatch, caltype):
     predict_file = open("predict.parset", "w")
     predict_file.write("msin=" + msin + "\n")
-    predict_file.write("msout=.\n\nsteps=[gaincal]\n\ngaincal.usebeammodel=True\ngaincal.solint=4\n")
-    predict_file.write("gaincal.sources=" + source + "\ngaincal.sourcedb=" + source_db + "\ngaincal.onebeamperpatch=True\ngaincal.caltype=diagonal\n")
+    predict_file.write("msout=" + msout + "\n")
+    predict_file.write("\nsteps=[gaincal]\n")
+    predict_file.write("\ngaincal.usebeammodel=" + str(usebeammodel) + "\n")
+    predict_file.write("gaincal.solint=" + str(solint) + "\n")
+    predict_file.write("gaincal.sources=" + source + "\ngaincal.sourcedb=" + source_db + "\ngaincal.onebeamperpatch=" + str(onebeamperpatch) + "\n")
+    predict_file.write("gaincal.caltype=" + caltype + "\n")
 
-def make_applycal_file(msin, calibrator):
+def make_applycal_file(msin, msout, datacolumn_in, datacolumn_out, calibrator, updateweights):
     applycal_file = open("applycal.parset", "w")
     applycal_file.write("msin=" + msin + "\n")
-    applycal_file.write("msout=.\n")
-    applycal_file.write("msin.datacolumn=DATA\nmsout.datacolumn=CORR_NO_BEAM\n")
-    applycal_file.write("steps=[applycal]\n\napplycal.parmdb=" + calibrator + "/instrument\napplycal.updateweights=True\n")
+    applycal_file.write("msout=" + msout + "\n")
+    applycal_file.write("msin.datacolumn=" + datacolumn_in + "\n")
+    applycal_file.write("msout.datacolumn=" + datacolumn_out + "\n")
+    applycal_file.write("steps=[applycal]\n\n")
+    applycal_file.write("applycal.parmdb=" + calibrator + "/instrument\n")
+    applycal_file.write("applycal.updateweights=" + str(updateweights) + "\n")
 
-def make_applybeam_file(msin):
+def make_applybeam_file(msin, msout, datacolumn_in, datacolumn_out, updateweights):
     applybeam_file = open("applybeam.parset", "w")
     applybeam_file.write("msin=" + msin + "\n")
-    applybeam_file.write("msout=.\n")
-    applybeam_file.write("msin.datacolumn=CORR_NO_BEAM\nmsout.datacolumn=CORRECTED_DATA\n")
-    applybeam_file.write("steps=[applybeam]\napplybeam.updateweights=True\n")
+    applybeam_file.write("msout=" + msout + "\n")
+    applybeam_file.write("msin.datacolumn=" + datacolumn_in + "\n")
+    applybeam_file.write("msout.datacolumn=" + datacolumn_out + "\n")
+    applybeam_file.write("steps=[applybeam]\n")
+    applybeam_file.write("applybeam.updateweights=" + str(updateweights) + "\n")
 
 def make_sourcedb(input, output):
     source_output = output
