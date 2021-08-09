@@ -25,7 +25,7 @@ def predict_clicked():
     disableButtons(buttons)
     predict_btn.update()
 
-    make_predict_file(calibrator_file_name.get(), calibrator_nametag.get(), sourcedb_output.get())
+    make_predict_file(calibrator_file_name.get(), calibrator_nametag.get(), predict_sourcedb_output.get())
 
     try:
         # Run NDPPP predict.parset here
@@ -135,19 +135,18 @@ def video_clicked():
 def manage_config_clicked():
     config_main_window = Toplevel(root)
     config_main_window.title("Options setup")
-    config_main_window.geometry("500x400")
     config_main_window.resizable(False, False)
 
-    top_frame = Frame(config_main_window, width=500, height=100)
+    top_frame = Frame(config_main_window)
     top_frame.grid(row=0, column=0, sticky=N, padx=5, pady=5)
 
-    config_window = Frame(config_main_window, width=500, height=300)
+    config_window = Frame(config_main_window)
     config_window.grid(row=1, column=0, sticky=N+W, padx=5, pady=5)
 
-    config_window_title = Label(top_frame, text="Choose which options you want included in wsclean", font=(main_font, 12, "bold"))
+    config_window_title = Label(top_frame, text="Options in wsclean", font=(main_font, 12, "bold"))
     config_window_title.grid(row=0, column=0, padx=(12, 0), pady=20)
 
-    setUpCheckbuttons(config_window, bool_vars)
+    setUpCheckbuttons(config_window, bool_vars, config_file_name)
 
 def change_fits():
     filename = filedialog.askopenfilename(initialdir = os.getcwd(),
@@ -296,6 +295,24 @@ bool_vars = [cores, mem, no_reorder, no_update_model_required, mgain, weight_bri
                 pol, auto_mask, multiscale, auto_threshold, data_column, niter, intervals_out,
                 interval, fit_beam, make_psf]
 
+# Options included in the predict.parset file
+predict_solint = StringVar(root, "4")
+calibrator_nametag = StringVar(root, "VirA")
+predict_sourcedb_output = StringVar(root, "Ateam_LBA_CC.sourcedb")
+predict_caltype = StringVar(root, "diagonal")
+predict_onebeamperpatch = BooleanVar(root, True)
+
+# Options included in the applycal.parset file
+applycal_datacolumn_in = StringVar(root, "DATA")
+applycal_datacolumn_out = StringVar(root, "CORR_NO_BEAM")
+applycal_parmdb = StringVar(root, "/instrument")
+applycal_updateweights = BooleanVar(root, True)
+
+# Options included in the applybeam.parset file
+applybeam_datacolumn_in = StringVar(root, "CORR_NO_BEAM")
+applybeam_datacolumn_out = StringVar(root, "CORRECTED_DATA")
+applybeam_updateweights = BooleanVar(root, True)
+
 config_file_name = StringVar(root, "config")
 config_file_path = StringVar(root, "config")
 fits_file_name = StringVar(root, "wsclean-t0000-image.fits")
@@ -308,11 +325,9 @@ calibrator_file_name = StringVar(root, "L242124_SB001_uv.dppp.MS")
 calibrator_id = StringVar(root, "L242124")
 calibrator_subband = StringVar(root, "001")
 calibrator_file_path = StringVar(root, "L242124_SB001_uv.dppp.MS")
-calibrator_nametag = StringVar(root, "VirA")
 calibrator_name = StringVar(root, "Virgo")
 skymodel_input_path = StringVar(root, "Ateam_LBA_CC.skymodel.txt")
 skymodel_input = StringVar(root, "Ateam_LBA_CC.skymodel.txt")
-sourcedb_output = StringVar(root, "Ateam_LBA_CC.sourcedb")
 
 use_datetime = BooleanVar(root, True)
 time_format_variable = StringVar(root, "%Y-%m-%d %H:%M:%S")
@@ -390,7 +405,10 @@ formatmenu.add_cascade(label="MS input file format", menu=MS_input_menu)
 menubar.add_cascade(label="Format", menu=formatmenu)
 
 settingsmenu = Menu(menubar, tearoff=0)
-settingsmenu.add_command(label="Manage the config file", command=manage_config_clicked)
+settingsmenu.add_command(label="Wsclean", command=manage_config_clicked)
+settingsmenu.add_command(label="Predict", command=manage_config_clicked)
+settingsmenu.add_command(label="Applycal", command=manage_config_clicked)
+settingsmenu.add_command(label="Applybeam", command=manage_config_clicked)
 menubar.add_cascade(label="Settings", menu=settingsmenu)
 
 commandmenu = Menu(menubar, tearoff=0)
@@ -435,7 +453,7 @@ def change_input_skymodel():
 
         if proceed_warning_message("", "Should a new sourcedb file be created for this skymodel file?"):
             try:
-                make_sourcedb(skymodel_input.get(), sourcedb_output.get())
+                make_sourcedb(skymodel_input.get(), predict_sourcedb_output.get())
             except (OSError, KeyboardInterrupt):
                 print("Error in making a new sourcedb, make sure you're inside the LOFAR environment\n")
 
@@ -768,22 +786,22 @@ main_row_ind += 1
 sourcedb_output_label.grid(row=main_row_ind, column=0, sticky = W + N, pady=5, padx=(80, 5))
 
 sourcedb_output_entry = Entry(left_frame, text="Ateam_LBA_CC.sourcedb", font=(main_font, 11), width=20)
-sourcedb_output_entry.insert(0, sourcedb_output.get())
+sourcedb_output_entry.insert(0, predict_sourcedb_output.get())
 sourcedb_output_entry.config(fg='grey')
 sourcedb_output_entry.grid(row=main_row_ind, column=1, columnspan=3, sticky = W+N, pady=4, padx=(0, 5))
 
 def handle_focus_in_sourcedb(_):
     sourcedb_output_entry.delete(0, 'end')
-    sourcedb_output_entry.insert(0, sourcedb_output.get())
+    sourcedb_output_entry.insert(0, predict_sourcedb_output.get())
     sourcedb_output_entry.config(fg='black')
 
 def handle_focus_out_sourcedb(_):
     sourcedb_output_entry.delete(0, 'end')
-    sourcedb_output_entry.insert(0, sourcedb_output.get())
+    sourcedb_output_entry.insert(0, predict_sourcedb_output.get())
     sourcedb_output_entry.config(fg='grey')
 
 def handle_enter_sourcedb(txt):
-    sourcedb_output.set(sourcedb_output_entry.get())
+    predict_sourcedb_output.set(sourcedb_output_entry.get())
     handle_focus_out_sourcedb("dummy")
 
 def handle_key_press_sourcedb(txt):
@@ -808,7 +826,7 @@ predict_btn.grid(row=main_row_ind, column=0, sticky = W+N, pady=3, padx=(70, 3))
 buttons.append(predict_btn)
 
 def view_predict_clicked():
-    make_predict_file(calibrator_file_name.get(), calibrator_nametag.get(), sourcedb_output.get())
+    make_predict_file(calibrator_file_name.get(), calibrator_nametag.get(), predict_sourcedb_output.get())
     if os.path.exists(os.getcwd() + "/predict.parset"):
         try:
             # Run NDPPP applycal.parset here
@@ -955,6 +973,7 @@ def view_wsclean_clicked():
     wscommands = lines_in_wsclean(myvars, bool_vars, MS_file_name, start_time, end_time)
     for x in range(len(wscommands)):
         print(wscommands[x]),
+    print("\n")
 
 view_wsclean_btn = Button(left_frame, text="View", command=view_wsclean_clicked, width=view_width)
 view_wsclean_btn.grid(row=main_row_ind, column=1, sticky = W+N, pady=3, padx=1)

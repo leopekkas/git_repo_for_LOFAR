@@ -23,48 +23,183 @@ def enableButtons(buttons):
     for b in buttons:
         b.config(state="normal")
 
-def setUpCheckbuttons(config_window, bool_vars):
+def change_config_file_line(config_file_name, name, newVal):
+    fileFound = True
+    data = []
+    try:
+        with open(config_file_name.get()) as f:
+            data = f.readlines()
+    except (OSError, IOError, KeyboardInterrupt):
+        fileFound = False
+
+    if fileFound == False:
+        print("No file called " + config_file_name + " found in the cwd\n")
+    else:
+        foundInd = -1
+        for i in range(len(data)):
+            data[i] = data[i].strip()
+            if (name + "=") in data[i]:
+                foundInd = i
+            elif (name + " =") in data[i]:
+                foundInd = i        
+
+        # If we find the entry with a corresponding name, edit it
+        # Otherwose make a new entry into the configuration file
+        if foundInd != -1:
+            data[foundInd] = name + "=" + str(newVal)
+        else:
+            data.append(name+"="+str(newVal))
+
+        with open(config_file_name.get(), 'w') as f:
+            for line in data:
+                f.write(line + "\n")
+
+def updateMyvars(config_file_name, myvars):
+    data = []
+    backupvars = {}
+    try:
+        with open(config_file_name.get()) as f:
+            for line in f:
+                name, value = line.partition("=")[::2]
+                myvars[name.strip()] = str(value)
+    except (OSError, IOError, KeyboardInterrupt):
+        return backupvars
+
+    return myvars
+
+def buildAnEntryBox(config_window, name, myvars, config_file_name):
+    font = "Courier"
+    name_entry = Entry(config_window, text=name, font=(font, 11), width=10)
+    name_entry.config(fg='grey')
+    name_entry.insert(0, "No input found")
+    if myvars.has_key(name):
+        name_entry.delete(0, "end")
+        name_entry.insert(0, myvars[name][:-1])
+
+    def handle_focus_in_name_entry(_):
+        name_entry.delete(0, 'end')
+        name_entry.config(fg='black')
+
+    def handle_focus_out_name_entry(_):
+        name_entry.config(fg='grey')
+        name_entry.insert(0, "No input found")
+        if myvars.has_key(name):
+            name_entry.delete(0, "end")
+            name_entry.insert(0, myvars[name][:-1])
+
+    def handle_enter_name_entry(txt, myvars):
+        # Set the file name as
+        change_config_file_line(config_file_name, name, name_entry.get())
+        myvars = updateMyvars(config_file_name, myvars)
+        name_entry.delete(0, "end")
+        name_entry.insert(0, myvars[name])
+        handle_focus_out_name_entry("dummy")
+
+    name_entry.bind("<FocusIn>", handle_focus_in_name_entry)
+    name_entry.bind("<FocusOut>", handle_focus_out_name_entry)
+    name_entry.bind("<Return>", lambda x: handle_enter_name_entry("dummy", myvars))
+
+    return name_entry
+
+def setUpCheckbuttons(config_window, bool_vars, config_file_name):
+    myvars = {}
+    FileFound = True
+
+    try:
+        with open(config_file_name.get()) as f:
+            for line in f:
+                name, value = line.partition("=")[::2]
+                myvars[name.strip()] = str(value)
+    except (OSError, IOError, KeyboardInterrupt):
+        FileFound = False
+
     row_index = 0
 
     row_index += 1
-    cores_cb = Checkbutton(config_window, text="cores", variable=bool_vars[0]).grid(row=row_index, column=0, padx=20, pady=5, sticky=W + N)
+    cores_cb = Checkbutton(config_window, text="cores", variable=bool_vars[0]).grid(row=row_index, column=0, padx=2, pady=5, sticky=W + N)
+    cores_entry = buildAnEntryBox(config_window, "cores", myvars, config_file_name)
+    cores_entry.grid(row=row_index, column=1, padx=(0, 10), sticky=W)
+
     row_index += 1
-    mem_cb = Checkbutton(config_window, text="memory", variable=bool_vars[1]).grid(row=row_index, column=0, padx=20, pady=5, sticky=W + N)
+    mem_cb = Checkbutton(config_window, text="memory", variable=bool_vars[1]).grid(row=row_index, column=0, padx=2, pady=5, sticky=W + N)
+    mem_entry = buildAnEntryBox(config_window, "memory_limit", myvars, config_file_name)
+    mem_entry.grid(row=row_index, column=1, padx=(0, 10), sticky=W)
+
     row_index += 1
-    no_reorder_cb = Checkbutton(config_window, text="no-reorder", variable=bool_vars[2]).grid(row=row_index, column=0, padx=20, pady=5, sticky=W + N)
+    no_reorder_cb = Checkbutton(config_window, text="no-reorder", variable=bool_vars[2]).grid(row=row_index, column=0, padx=2, pady=5, sticky=W + N)
     row_index += 1
-    no_update_model_required_cb = Checkbutton(config_window, text="no-update-model-required", variable=bool_vars[3]).grid(row=row_index, column=0, padx=20, pady=5, sticky=W + N)
+    no_update_model_required_cb = Checkbutton(config_window, text="no-update-model-required", variable=bool_vars[3]).grid(row=row_index, column=0, padx=2, pady=5, sticky=W + N)
     row_index += 1
-    mgain_cb = Checkbutton(config_window, text="mgain", variable=bool_vars[4]).grid(row=row_index, column=0, padx=20, pady=5, sticky=W + N)
+    mgain_cb = Checkbutton(config_window, text="mgain", variable=bool_vars[4]).grid(row=row_index, column=0, padx=2, pady=5, sticky=W + N)
+    mgain_entry = buildAnEntryBox(config_window, "mgain", myvars, config_file_name)
+    mgain_entry.grid(row=row_index, column=1, padx=(0, 10), sticky=W)
+
     row_index += 1
-    wb_cb = Checkbutton(config_window, text="weight briggs", variable=bool_vars[5]).grid(row=row_index, column=0, padx=20, pady=5, sticky=W + N)
+    wb_cb = Checkbutton(config_window, text="weight briggs", variable=bool_vars[5]).grid(row=row_index, column=0, padx=2, pady=5, sticky=W + N)
+    wb_entry = buildAnEntryBox(config_window, "weight_briggs", myvars, config_file_name)
+    wb_entry.grid(row=row_index, column=1, padx=(0, 10), sticky=W)
+
     row_index += 1
-    size_cb = Checkbutton(config_window, text="size", variable=bool_vars[6]).grid(row=row_index, column=0, padx=20, pady=5, sticky=W + N)
+    size_cb = Checkbutton(config_window, text="size", variable=bool_vars[6]).grid(row=row_index, column=0, padx=2, pady=5, sticky=W + N)
+    size1_entry = buildAnEntryBox(config_window, "size", myvars, config_file_name)
+    size1_entry.grid(row=row_index, column=1, padx=(0, 10), sticky=W)
     row_index += 1
-    scale_cb = Checkbutton(config_window, text="scale", variable=bool_vars[7]).grid(row=row_index, column=0, padx=20, pady=5, sticky=W + N)
+    size2_entry = buildAnEntryBox(config_window, "size2", myvars, config_file_name)
+    size2_entry.grid(row=row_index, column=1, padx=(0, 10), sticky=W)
+
     row_index += 1
-    pol_cb = Checkbutton(config_window, text="polarisation", variable=bool_vars[8]).grid(row=row_index, column=0, padx=20, pady=5, sticky=W + N)
+    scale_cb = Checkbutton(config_window, text="scale", variable=bool_vars[7]).grid(row=row_index, column=0, padx=2, pady=5, sticky=W + N)
+    scale_entry = buildAnEntryBox(config_window, "scale", myvars, config_file_name)
+    scale_entry.grid(row=row_index, column=1, padx=(0, 10), sticky=W)
+
+    row_index += 1
+    pol_cb = Checkbutton(config_window, text="polarisation", variable=bool_vars[8]).grid(row=row_index, column=0, padx=2, pady=5, sticky=W + N)
+    pol_entry = buildAnEntryBox(config_window, "polarisation", myvars, config_file_name)
+    pol_entry.grid(row=row_index, column=1, padx=(0, 10), sticky=W)
 
     row_index = 0
 
     row_index += 1
-    auto_mask_cb = Checkbutton(config_window, text="auto-mask", variable=bool_vars[9]).grid(row=row_index, column=1, padx=20, pady=5, sticky=W + N)
+    auto_mask_cb = Checkbutton(config_window, text="auto-mask", variable=bool_vars[9]).grid(row=row_index, column=3, padx=2, pady=5, sticky=W + N)
+    automask_entry = buildAnEntryBox(config_window, "auto_mask", myvars, config_file_name)
+    automask_entry.grid(row=row_index, column=4, padx=(0, 10), sticky=W)
+
     row_index += 1
-    multiscale_cb = Checkbutton(config_window, text="multiscale", variable=bool_vars[10]).grid(row=row_index, column=1, padx=20, pady=5, sticky=W + N)
+    multiscale_cb = Checkbutton(config_window, text="multiscale", variable=bool_vars[10]).grid(row=row_index, column=3, padx=2, pady=5, sticky=W + N)
+
     row_index += 1
-    auto_threshold_cb = Checkbutton(config_window, text="auto-threshold", variable=bool_vars[11]).grid(row=row_index, column=1, padx=20, pady=5, sticky=W + N)
+    auto_threshold_cb = Checkbutton(config_window, text="auto-threshold", variable=bool_vars[11]).grid(row=row_index, column=3, padx=2, pady=5, sticky=W + N)
+    threshold_entry = buildAnEntryBox(config_window, "auto_threshold", myvars, config_file_name)
+    threshold_entry.grid(row=row_index, column=4, padx=(0, 10), sticky=W)
+
     row_index += 1
-    data_column_cb = Checkbutton(config_window, text="data-column", variable=bool_vars[12]).grid(row=row_index, column=1, padx=20, pady=5, sticky=W + N)
+    data_column_cb = Checkbutton(config_window, text="data-column", variable=bool_vars[12]).grid(row=row_index, column=3, padx=2, pady=5, sticky=W + N)
+    data_entry = buildAnEntryBox(config_window, "data_column", myvars, config_file_name)
+    data_entry.grid(row=row_index, column=4, padx=(0, 10), sticky=W)
+
     row_index += 1
-    niter_cb = Checkbutton(config_window, text="niter", variable=bool_vars[13]).grid(row=row_index, column=1, padx=20, pady=5, sticky=W + N)
+    niter_cb = Checkbutton(config_window, text="niter", variable=bool_vars[13]).grid(row=row_index, column=3, padx=2, pady=5, sticky=W + N)
+    niter_entry = buildAnEntryBox(config_window, "n_iter", myvars, config_file_name)
+    niter_entry.grid(row=row_index, column=4, padx=(0, 10), sticky=W)
+
     row_index += 1
-    intervals_out_cb = Checkbutton(config_window, text="intervals-out", variable=bool_vars[14]).grid(row=row_index, column=1, padx=20, pady=5, sticky=W + N)
+    intervals_out_cb = Checkbutton(config_window, text="intervals-out", variable=bool_vars[14]).grid(row=row_index, column=3, padx=2, pady=5, sticky=W + N)
+    intervals_out_entry = buildAnEntryBox(config_window, "intervals_out", myvars, config_file_name)
+    intervals_out_entry.grid(row=row_index, column=4, padx=(0, 10), sticky=W)
+
     row_index += 1
-    interval_start_cb = Checkbutton(config_window, text="interval", variable=bool_vars[15]).grid(row=row_index, column=1, padx=20, pady=5, sticky=W + N)
+    interval_start_cb = Checkbutton(config_window, text="interval", variable=bool_vars[15]).grid(row=row_index, column=3, padx=2, pady=5, sticky=W + N)
+    start_entry = buildAnEntryBox(config_window, "start_time", myvars, config_file_name)
+    start_entry.grid(row=row_index, column=4, padx=(0, 10), sticky=W)
     row_index += 1
-    fit_beam_cb = Checkbutton(config_window, text="fit-beam", variable=bool_vars[16]).grid(row=row_index, column=1, padx=20, pady=5, sticky=W + N)
+    end_entry = buildAnEntryBox(config_window, "end_time", myvars, config_file_name)
+    end_entry.grid(row=row_index, column=4, padx=(0, 10), sticky=W)
+
     row_index += 1
-    make_psf_cb = Checkbutton(config_window, text="make-psf", variable=bool_vars[17]).grid(row=row_index, column=1, padx=20, pady=5, sticky=W + N)
+    fit_beam_cb = Checkbutton(config_window, text="fit-beam", variable=bool_vars[16]).grid(row=row_index, column=3, padx=2, pady=5, sticky=W + N)
+
+    row_index += 1
+    make_psf_cb = Checkbutton(config_window, text="make-psf", variable=bool_vars[17]).grid(row=row_index, column=3, padx=2, pady=5, sticky=W + N)
 
 def setUpTerminalLog(right_bottom_frame, main_font, frame_color):
     font_size = 9
