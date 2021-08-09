@@ -379,25 +379,25 @@ def setUpPredictEntries(frame, msout, solint, calibrator, sourcedb, caltype, use
     row_index = 0
     row_index += 1
     msout_label = Label(frame, text="msout: ", font=("Times", 11)).grid(row=row_index, column=0, padx=5, pady=5, sticky=W)
-    msout_entry = make_predict_entry(frame, "msout", msout)
+    msout_entry = make_parset_entry(frame, "msout", msout)
     msout_entry.grid(row=row_index, column=1, padx=(0, 10), sticky=W)
 
     row_index += 1
     solint_label = Label(frame, text="Solution interval: ", font=("Times", 11)).grid(row=row_index, column=0, padx=5, pady=5, sticky=W)
-    solint_entry = make_predict_entry(frame, "solint", solint)
+    solint_entry = make_parset_entry(frame, "solint", solint)
     solint_entry.grid(row=row_index, column=1, padx=(0, 10), sticky=W)
 
     row_index += 1
     cal_label = Label(frame, text="Calibrator: ", font=("Times", 11)).grid(row=row_index, column=0, padx=5, pady=5, sticky=W)
-    cal_entry = make_predict_entry(frame, "calibrator", calibrator)
+    cal_entry = make_parset_entry(frame, "calibrator", calibrator)
     cal_entry.grid(row=row_index, column=1, padx=(0, 10), sticky=W)
 
     row_index += 1
     sourcedb_label = Label(frame, text="Sourcedb: ", font=("Times", 11)).grid(row=row_index, column=0, padx=5, pady=5, sticky=W)
-    sourcedb_entry = make_predict_entry(frame, "sourcedb", sourcedb)
+    sourcedb_entry = make_parset_entry(frame, "sourcedb", sourcedb)
     sourcedb_entry.grid(row=row_index, column=1, padx=(0, 10), sticky=W)
 
     row_index += 1
     caltype_label = Label(frame, text="caltype: ", font=("Times", 11)).grid(row=row_index, column=0, padx=5, pady=5, sticky=W)
-    caltype_entry = make_predict_entry(frame, "caltype", caltype)
+    caltype_entry = make_parset_entry(frame, "caltype", caltype)
     caltype_entry.grid(row=row_index, column=1, padx=(0, 10), sticky=W)

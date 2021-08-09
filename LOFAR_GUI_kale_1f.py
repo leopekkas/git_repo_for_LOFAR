@@ -426,7 +426,7 @@ menubar.add_cascade(label="Format", menu=formatmenu)
 
 settingsmenu = Menu(menubar, tearoff=0)
 settingsmenu.add_command(label="Wsclean", command=manage_config_clicked)
-settingsmenu.add_command(label="Predict", command=manage_config_clicked)
+settingsmenu.add_command(label="Predict", command=manage_predict_clicked)
 settingsmenu.add_command(label="Applycal", command=manage_config_clicked)
 settingsmenu.add_command(label="Applybeam", command=manage_config_clicked)
 menubar.add_cascade(label="Settings", menu=settingsmenu)

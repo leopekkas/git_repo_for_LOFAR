@@ -1,4 +1,4 @@
-msin=TestiXD_SB001_uv.dppp.MS
+msin=L242124_SB001_uv.dppp.MS
 msout=.
 
 steps=[gaincal]
