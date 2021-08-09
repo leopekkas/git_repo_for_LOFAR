@@ -6,7 +6,7 @@ from Redirect import *
 from File_reader import read_config, print_config, make_predict_file, make_applycal_file, lines_in_wsclean
 from File_reader import make_applybeam_file, print_parset, make_sourcedb, print_skymodel, read_MS_info
 from fits_plotting_tool import save_fits, produce_video, icrs_to_helio, plot_single_fits
-from UI_helper_functions import disableButtons, enableButtons, setUpCheckbuttons, setUpTerminalLog, setUpInformationLog, setUpPredictEntries
+from UI_helper_functions import disableButtons, enableButtons, setUpCheckbuttons, setUpTerminalLog, setUpInformationLog, setUpPredictEntries, setUpApplycalEntries, setUpApplybeamEntries
 from UI_helper_functions import writeToInfoFeed, writeToInfoFeedNoLinebreak, make_info_buttons, proceed_warning_message
 import os
 import sys
@@ -134,7 +134,7 @@ def video_clicked():
 
 def manage_predict_clicked():
     predict_main_window = Toplevel(root)
-    predict_main_window.title("predict.parset options")
+    predict_main_window.title("predict.parset")
     predict_main_window.wm_attributes('-type', 'dialog')
 
     top_frame = Frame(predict_main_window)
@@ -148,9 +148,41 @@ def manage_predict_clicked():
 
     setUpPredictEntries(predict_frame, predict_msout, predict_solint, calibrator_nametag, predict_sourcedb_output, predict_caltype, predict_usebeammodel, predict_onebeamperpatch)
 
+def manage_applycal_clicked():
+    applycal_main_window = Toplevel(root)
+    applycal_main_window.title("applycal.parset")
+    applycal_main_window.wm_attributes('-type', 'dialog')
+
+    top_frame = Frame(applycal_main_window)
+    top_frame.grid(row=0, column=0, sticky=N, padx=5, pady=5)
+
+    applycal_frame = Frame(applycal_main_window)
+    applycal_frame.grid(row=1, column=0, sticky=N+W, padx=5, pady=5)
+
+    applycal_window_title = Label(top_frame, text="Options in applycal.parset", font=(main_font, 13, "bold"))
+    applycal_window_title.grid(row=0, column=0, padx=(20, 0), pady=20)
+
+    setUpApplycalEntries(applycal_frame, applycal_msout, applycal_datacolumn_in, applycal_datacolumn_out, applycal_parmdb, applybeam_updateweights)
+
+def manage_applybeam_clicked():
+    applybeam_main_window = Toplevel(root)
+    applybeam_main_window.title("applybeam.parset")
+    applybeam_main_window.wm_attributes('-type', 'dialog')
+
+    top_frame = Frame(applybeam_main_window)
+    top_frame.grid(row=0, column=0, sticky=N, padx=5, pady=5)
+
+    applybeam_frame = Frame(applybeam_main_window)
+    applybeam_frame.grid(row=1, column=0, sticky=N+W, padx=5, pady=5)
+
+    applybeam_window_title = Label(top_frame, text="Options in applybeam.parset", font=(main_font, 13, "bold"))
+    applybeam_window_title.grid(row=0, column=0, padx=(20, 0), pady=20)
+
+    setUpApplybeamEntries(applybeam_frame, applybeam_msout, applybeam_datacolumn_in, applybeam_datacolumn_out, applybeam_updateweights)
+
 def manage_config_clicked():
     config_main_window = Toplevel(root)
-    config_main_window.title("wsclean options")
+    config_main_window.title("wsclean")
     config_main_window.resizable(False, False)
 
     top_frame = Frame(config_main_window)
@@ -427,8 +459,8 @@ menubar.add_cascade(label="Format", menu=formatmenu)
 settingsmenu = Menu(menubar, tearoff=0)
 settingsmenu.add_command(label="Wsclean", command=manage_config_clicked)
 settingsmenu.add_command(label="Predict", command=manage_predict_clicked)
-settingsmenu.add_command(label="Applycal", command=manage_config_clicked)
-settingsmenu.add_command(label="Applybeam", command=manage_config_clicked)
+settingsmenu.add_command(label="Applycal", command=manage_applycal_clicked)
+settingsmenu.add_command(label="Applybeam", command=manage_applybeam_clicked)
 menubar.add_cascade(label="Settings", menu=settingsmenu)
 
 commandmenu = Menu(menubar, tearoff=0)

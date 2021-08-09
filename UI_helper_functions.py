@@ -351,7 +351,7 @@ def make_info_buttons(frame, row_ind, root):
 
 def make_parset_entry(frame, name, value):
     font = "Times"
-    name_entry = Entry(frame, text = name, font=(font, 11), width=10)
+    name_entry = Entry(frame, text = name, font=(font, 11), width=13)
     name_entry.config(fg='grey')
     name_entry.delete(0, "end")
     name_entry.insert(0, value.get())
@@ -401,3 +401,42 @@ def setUpPredictEntries(frame, msout, solint, calibrator, sourcedb, caltype, use
     caltype_label = Label(frame, text="caltype: ", font=("Times", 11)).grid(row=row_index, column=0, padx=5, pady=5, sticky=W)
     caltype_entry = make_parset_entry(frame, "caltype", caltype)
     caltype_entry.grid(row=row_index, column=1, padx=(0, 10), sticky=W)
+
+def setUpApplycalEntries(frame, msout, datacolumn_in, datacolumn_out, parmdb, updateweights):
+    row_index = 0
+    row_index += 1
+    msout_label = Label(frame, text="msout: ", font=("Times", 11)).grid(row=row_index, column=0, padx=5, pady=5, sticky=W)
+    msout_entry = make_parset_entry(frame, "msout", msout)
+    msout_entry.grid(row=row_index, column=1, padx=(0, 10), sticky=W)
+
+    row_index += 1
+    datacolumn_in_label = Label(frame, text="Datacolumn (in): ", font=("Times", 11)).grid(row=row_index, column=0, padx=5, pady=5, sticky=W)
+    datacolumn_in_entry = make_parset_entry(frame, "datacolumn_in", datacolumn_in)
+    datacolumn_in_entry.grid(row=row_index, column=1, padx=(0, 10), sticky=W)
+
+    row_index += 1
+    datacolumn_out_label = Label(frame, text="Datacolumn (out): ", font=("Times", 11)).grid(row=row_index, column=0, padx=5, pady=5, sticky=W)
+    datacolumn_out_entry = make_parset_entry(frame, "datacolumn_out", datacolumn_out)
+    datacolumn_out_entry.grid(row=row_index, column=1, padx=(0, 10), sticky=W)
+
+    row_index += 1
+    parmdb_label = Label(frame, text="Parmdb: ", font=("Times", 11)).grid(row=row_index, column=0, padx=5, pady=5, sticky=W)
+    parmdb_entry = make_parset_entry(frame, "parmdb", parmdb)
+    parmdb_entry.grid(row=row_index, column=1, padx=(0, 10), sticky=W)
+
+def setUpApplybeamEntries(frame, msout, datacolumn_in, datacolumn_out, updateweights):
+    row_index = 0
+    row_index += 1
+    msout_label = Label(frame, text="msout: ", font=("Times", 11)).grid(row=row_index, column=0, padx=5, pady=5, sticky=W)
+    msout_entry = make_parset_entry(frame, "msout", msout)
+    msout_entry.grid(row=row_index, column=1, padx=(0, 10), sticky=W)
+
+    row_index += 1
+    datacolumn_in_label = Label(frame, text="Datacolumn (in): ", font=("Times", 11)).grid(row=row_index, column=0, padx=5, pady=5, sticky=W)
+    datacolumn_in_entry = make_parset_entry(frame, "datacolumn_in", datacolumn_in)
+    datacolumn_in_entry.grid(row=row_index, column=1, padx=(0, 10), sticky=W)
+
+    row_index += 1
+    datacolumn_out_label = Label(frame, text="Datacolumn (out): ", font=("Times", 11)).grid(row=row_index, column=0, padx=5, pady=5, sticky=W)
+    datacolumn_out_entry = make_parset_entry(frame, "datacolumn_out", datacolumn_out)
+    datacolumn_out_entry.grid(row=row_index, column=1, padx=(0, 10), sticky=W)
