@@ -4,13 +4,14 @@ import time
 import subprocess as sub
 from Redirect import *
 from File_reader import read_config, print_config, make_predict_file, make_applycal_file, lines_in_wsclean
-from File_reader import make_applybeam_file, print_parset, make_sourcedb, print_skymodel, read_MS_info
+from File_reader import make_applybeam_file, print_parset, make_sourcedb, print_skymodel
 from fits_plotting_tool import save_fits, produce_video, icrs_to_helio, plot_single_fits
 from UI_helper_functions import disableButtons, enableButtons, setUpCheckbuttons, setUpTerminalLog, setUpInformationLog, setUpPredictEntries, setUpApplycalEntries, setUpApplybeamEntries
 from UI_helper_functions import writeToInfoFeed, writeToInfoFeedNoLinebreak, make_info_buttons, proceed_warning_message
 import os
 import sys
 
+## Depending on a dropdown variable clicks the correct button (job queue, move to it's own class)
 def checkAndRunDropdownInput(variable):
     if (variable.get() == "NDPPP predict.parset"):
         predict_clicked()
@@ -39,6 +40,7 @@ def predict_clicked():
     predict_btn.update()
     enableButtons(buttons)
 
+## Click function for the NDPPP applycal.parset command (move to its own class)
 def applycal_clicked():
     disableButtons(buttons)
     applycal_btn.update()
@@ -57,6 +59,7 @@ def applycal_clicked():
     applycal_btn.update()
     enableButtons(buttons)
 
+## Click function for the NDPPP applybeam.parset command (move to its own class)
 def applybeam_clicked():
     disableButtons(buttons)
     applybeam_btn.update()
@@ -75,13 +78,14 @@ def applybeam_clicked():
     applybeam_btn.update()
     enableButtons(buttons)
 
+## Click function for wsclean command (move to its own class)
 def wsclean_clicked():
     # Run NDPPP predict.parset here
     # Run wsclean here
     try:
         disableButtons(buttons)
         wsclean_btn.update()
-        wscommand = read_config(config_file_name.get(), bool_vars, MS_file_name, MS_id, use_datetime, time_format_variable)
+        wscommand = read_config(config_file_name.get(), bool_vars, MS_file_name, MS_id, time_format_variable)
         if wscommand==-1:
             print("wsclean exited\n")
         else:

@@ -7,26 +7,42 @@ def proceed_warning_message(titletext, text):
     warningboxresult = tkMessageBox.askyesno(title=titletext, message=text)
     return warningboxresult
 
+## Writes to a Tkinter Text widget, outputs a distinct line after the input line
+#
+# @param line String value which is written into the text widget
+# @param info_text A Tkinter text widget
 def writeToInfoFeed(line, info_text):
     info_text.insert('end', line + "\n")
     info_text.insert('end', "\n************************************************************\n\n")
     info_text.see('end')
 
+## Writes to a Tkinter Text widget without a line break
+#
+# @param line String value which is written into the text widget
+# @param info_text A Tkinter text widget
 def writeToInfoFeedNoLinebreak(line, info_text):
     info_text.insert('end', line)
     info_text.see('end')
 
+## Disables a list of buttons
 def disableButtons(buttons):
     for b in buttons:
         b.config(state="disabled")
 
+## Changes the state of a list of buttons to normal
 def enableButtons(buttons):
     for b in buttons:
         b.config(state="normal")
 
+## Changes a single value inside the configuration file
+#
+# @param config_file_name Name of the config file
+# @param name Name of the value that will be changed
+# @param newVal New value for the changed value
 def change_config_file_line(config_file_name, name, newVal):
     fileFound = True
     data = []
+    # Open the config file and save its contents into a list
     try:
         with open(config_file_name.get()) as f:
             data = f.readlines()
@@ -51,10 +67,17 @@ def change_config_file_line(config_file_name, name, newVal):
         else:
             data.append(name+"="+str(newVal))
 
+        # Write the new contents of the config file back to it
         with open(config_file_name.get(), 'w') as f:
             for line in data:
                 f.write(line + "\n")
 
+## Updates a dict of key - value pairs with the contents of a configuration file
+#
+# @param config_file_name Name of the configuration file
+# @param myvars A dictionary that will be updated
+#
+# @return myvars The dictionary that has been updated
 def updateMyvars(config_file_name, myvars):
     data = []
     backupvars = {}
@@ -68,6 +91,14 @@ def updateMyvars(config_file_name, myvars):
 
     return myvars
 
+## Builds a Tkinter Entry-widget that changes a value inside the configuration file
+#
+# @param config_window_name A Tkinter Frame-widget
+# @param name Name of the value that the Entry widget handles
+# @param myvars A dict of key - value pairs for the configuration file
+# @param config_file_name Name of the config file
+#
+# @return A Tkinter Entry-widget
 def buildAnEntryBox(config_window, name, myvars, config_file_name):
     font = "Courier"
     name_entry = Entry(config_window, text=name, font=(font, 11), width=10)
@@ -102,6 +133,7 @@ def buildAnEntryBox(config_window, name, myvars, config_file_name):
 
     return name_entry
 
+## Sets up checkbuttons for a Manage config window (Move to its own class)
 def setUpCheckbuttons(config_window, bool_vars, config_file_name):
     myvars = {}
     FileFound = True
@@ -204,6 +236,7 @@ def setUpCheckbuttons(config_window, bool_vars, config_file_name):
     row_index += 1
     make_psf_cb = Checkbutton(config_window, text="make-psf", variable=bool_vars[17]).grid(row=row_index, column=3, padx=2, pady=5, sticky=W + N)
 
+## Terminal log (Make its own class)
 def setUpTerminalLog(right_bottom_frame, main_font, frame_color):
     font_size = 9
 
@@ -220,6 +253,7 @@ def setUpTerminalLog(right_bottom_frame, main_font, frame_color):
     old_stdout = sys.stdout
     sys.stdout = Redirect(text_log)
 
+## Information log (Make its own class)
 def setUpInformationLog(right_frame, main_font, frame_color):
     font_size = 9
 
@@ -293,6 +327,13 @@ def setUpInformationLog(right_frame, main_font, frame_color):
 
     return info_text
 
+## Creates an info widget
+#
+# @param frame Frame in which the button is created
+# @param root Main Tkinter window
+# @param infotext The information that is shows to the user
+#
+# @return The information widget
 def info_button_factory(frame, root, infotext):
     font = "Times"
     color = "light yellow"
@@ -318,6 +359,7 @@ def info_button_factory(frame, root, infotext):
 
     return questionmark_button
 
+## Makes the info buttons for the main window
 def make_info_buttons(frame, row_ind, root):
     row_ind+=1
     # Note, the padx/columnspan is a hacky solution but works for now
@@ -349,6 +391,13 @@ def make_info_buttons(frame, row_ind, root):
     video_info_btn = info_button_factory(frame, root, "Choose multiple .fits files with [ctrl + click] for plotting into an mp4 file\n (Work in progress)")
     #video_info_btn.grid(row=row_ind, column=0, columnspan=2, padx=(303, 0), pady=3, sticky=W+S)
 
+## A factory function that returns an Entry that can change the values for .parset options
+#
+# @param frame Tkinter Frame
+# @param name A unique name for this entry
+# @param value The "StringVar" value that is changed via the Entry
+#
+# @return A Tkinter Entry widget
 def make_parset_entry(frame, name, value):
     font = "Times"
     name_entry = Entry(frame, text = name, font=(font, 11), width=13)
@@ -375,6 +424,7 @@ def make_parset_entry(frame, name, value):
 
     return name_entry
 
+## Sets up the manage predict window (move to its own class)
 def setUpPredictEntries(frame, msout, solint, calibrator, sourcedb, caltype, usebeammodel, onebeamperpatch):
     row_index = 0
     row_index += 1
@@ -402,6 +452,7 @@ def setUpPredictEntries(frame, msout, solint, calibrator, sourcedb, caltype, use
     caltype_entry = make_parset_entry(frame, "caltype", caltype)
     caltype_entry.grid(row=row_index, column=1, padx=(0, 10), sticky=W)
 
+## Sets up the manage applycal window (move to its own class)
 def setUpApplycalEntries(frame, msout, datacolumn_in, datacolumn_out, parmdb, updateweights):
     row_index = 0
     row_index += 1
@@ -424,6 +475,7 @@ def setUpApplycalEntries(frame, msout, datacolumn_in, datacolumn_out, parmdb, up
     parmdb_entry = make_parset_entry(frame, "parmdb", parmdb)
     parmdb_entry.grid(row=row_index, column=1, padx=(0, 10), sticky=W)
 
+## Sets up the manage applybeam window (move to its own class)
 def setUpApplybeamEntries(frame, msout, datacolumn_in, datacolumn_out, updateweights):
     row_index = 0
     row_index += 1

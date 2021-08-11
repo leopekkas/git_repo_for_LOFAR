@@ -6,6 +6,15 @@ from datetime import datetime, time, timedelta
 from UI_helper_functions import proceed_warning_message, writeToInfoFeed
 import csv
 
+## Returns a list of all the lines in the wsclean command depending on the configuration settings
+#
+# @param myvars A dictionary with key - value pairs that match the config option to its value
+# @param bool_vars List of variables that inform the program which options are included in the wsclean command and which are excluded
+# @param input_set The input measurement set for the wsclean command (Solar MS)
+# @param start_time Starting time of the wsclean command in computer steps
+# @param end_time Ending time of the wsclean command in computer steps
+#
+# @return a list of all the parts of a wsclean command
 def lines_in_wsclean(myvars, bool_vars, input_set, start_time, end_time):
 
     ws_list = []
@@ -35,6 +44,7 @@ def lines_in_wsclean(myvars, bool_vars, input_set, start_time, end_time):
         if myvars.has_key("size2"):
             ws_list.append(myvars["size2"])
         else:
+            # If only one size value is inserted, use the same value for size1 and size2
             ws_list.append(myvars["size"])
     if (bool_vars[7].get() and myvars.has_key("scale")):
         scale_string = myvars["scale"] + "asec"
@@ -73,9 +83,12 @@ def lines_in_wsclean(myvars, bool_vars, input_set, start_time, end_time):
 
     ws_list_ret = [x.replace("\n", "") for x in ws_list]
 
-    # (Return a list of terminal inputs)
     return ws_list_ret
 
+## Receives an input and the desired format (YYYY-MM-DD HH:MM:SS) and checks if the input matches the format
+#
+# @param input The input value (String)
+# @param format The format in which the datetime should be presented in the configuration
 def check_if_datetime(input, format):
     try:
         datetime.strptime(input.strip(), format.get())
@@ -84,7 +97,17 @@ def check_if_datetime(input, format):
         return False
     return True
 
-def read_config(filename, bool_vars, input_set, MS_id, use_datetime, time_format):
+## Reads the specified configuration file and changes the input datetimes to simulation steps,
+## returns a list of commands included in the wsclean command
+#
+# @param filename The configuration file name
+# @param bool_vars List of variables that inform the program which options are included in the wsclean command and which are excluded
+# @oaram input_set The input measurement set (Solar MS)
+# @param MS_id String variable of the solar MS ID
+# @param time_format Desired time format for datetime objects in wsclean
+#
+# @return List of wsclean options that are comprised by the whole wsclean command
+def read_config(filename, bool_vars, input_set, MS_id, time_format):
     MS_info_dict = {}
 
     try:
@@ -92,6 +115,7 @@ def read_config(filename, bool_vars, input_set, MS_id, use_datetime, time_format
     except IOError:
         print("No file called \"MS_info.csv\" found, using timesteps in the wsclean command\n")
 
+    # Fill a "myvars" dict with key - value pairs corresponding to configuration options
     myvars = {}
     try:
         with open(filename) as f:
@@ -110,34 +134,31 @@ def read_config(filename, bool_vars, input_set, MS_id, use_datetime, time_format
     if myvars.has_key("end_time"):
         end_time = myvars["end_time"]
 
-    # If the user wants to use datetime as a time input run it through calculate_real_time_into_steps
-    if (use_datetime.get() == True):
-        if MS_info_dict.has_key(MS_id.get()):
-            MS_values = MS_info_dict[MS_id.get()]
-            print("Reading time information for measurement set: " + MS_id.get() + "\n")
-            MS_start_datetime = MS_values[0]
-            MS_end_datetime = MS_values[1]
-            total_steps = MS_values[2]
-            if (check_if_datetime(start_time, time_format) and check_if_datetime(end_time, time_format)):
-                print("Start time: " + MS_start_datetime + "\nEnd time:" + MS_end_datetime + "\nnsteps" + total_steps + "\n")
-                start_time, end_time = calculate_real_time_into_steps(start_time, end_time, MS_start_datetime, MS_end_datetime, total_steps, time_format)
-            else:
-                print("Config file input is not in the format " + time_format.get() + ": " + str(start_time))
-                return -1
+    if MS_info_dict.has_key(MS_id.get()):
+        MS_values = MS_info_dict[MS_id.get()]
+        print("Reading time information for measurement set: " + MS_id.get() + "\n")
+        MS_start_datetime = MS_values[0]
+        MS_end_datetime = MS_values[1]
+        total_steps = MS_values[2]
+        if (check_if_datetime(start_time, time_format) and check_if_datetime(end_time, time_format)):
+            print("Start time: " + MS_start_datetime + "\nEnd time:" + MS_end_datetime + "\nnsteps" + total_steps + "\n")
+            start_time, end_time = calculate_real_time_into_steps(start_time, end_time, MS_start_datetime, MS_end_datetime, total_steps, time_format)
         else:
-            print("The file \"MS_info.csv\" doesn't contain an entry for the MS file: " + MS_id.get())
+            print("Config file input is not in the format " + time_format.get() + ": " + str(start_time))
             return -1
-
-    if (check_if_datetime(start_time, time_format) or check_if_datetime(end_time, time_format)):
-        if use_datetime.get() == False:
-            print("The config file contains a \'Datetime\' object as it's time input, please mark the \"Use datetime\" option or double check you config file\n")
-            return -1
+    else:
+        print("The file \"MS_info.csv\" doesn't contain an entry for the MS file: " + MS_id.get())
+        return -1
 
     ws_list_ret = lines_in_wsclean(myvars, bool_vars, input_set, start_time, end_time)
 
-    # (Return a list of terminal inputs)
+    # Return a list of terminal inputs
     return ws_list_ret
 
+## Prints the contents of the configuration file
+#
+# @param filename The configuration file in String format
+# @param textfield The Tkinter Text widget that the information will be written into
 def print_config(filename, textfield):
     textfield.config(state='normal')
 
@@ -153,6 +174,10 @@ def print_config(filename, textfield):
     except IOError:
         writeToInfoFeed("No configuration file with the name \"" + os.path.basename(filename) + "\" found", textfield)
 
+## Prints the contents of the skymodel file
+#
+# @param filename The skymodel file in String format
+# @param textfield The Tkinter Text widget that the information will be written into
 def print_skymodel(filename, textfield):
     textfield.config(state='normal')
 
@@ -169,6 +194,10 @@ def print_skymodel(filename, textfield):
     except IOError:
         writeToInfoFeed("No configuration file with the name \"" + os.path.basename(filename) + "\" found", textfield)
 
+## Prints the contents of the specified .parset file
+#
+# @param filename The predict.parset file in String format
+# @param textfield The Tkinter Text widget that the information will be written into
 def print_parset(filename, textfield):
     textfield.config(state='normal')
     textfield.insert('end', "The " + filename + " file contains the following lines: \n")
@@ -184,6 +213,16 @@ def print_parset(filename, textfield):
     except IOError:
         writeToInfoFeed("No configuration file with the name \"" + os.path.basename(filename) + "\" found", textfield)
 
+## Writes a predict.parset file
+#
+# @param msin The Solar MS
+# @param msout Output file name ("." overwrites the msin file)
+# @param source The gaincal.sources -option
+# @param source_db The Source db option
+# @param solint Solution interval (int/String)
+# @param usebeammodel The usebeammodel option, Boolean value
+# @param onebeamperpatch The onebeamperpatch option, Boolean value
+# @param caltype Caltype option in wsclean
 def make_predict_file(msin, msout, source, source_db, solint, usebeammodel, onebeamperpatch, caltype):
     predict_file = open("predict.parset", "w")
     predict_file.write("msin=" + msin + "\n")
@@ -193,7 +232,16 @@ def make_predict_file(msin, msout, source, source_db, solint, usebeammodel, oneb
     predict_file.write("gaincal.solint=" + str(solint) + "\n")
     predict_file.write("gaincal.sources=" + source + "\ngaincal.sourcedb=" + source_db + "\ngaincal.onebeamperpatch=" + str(onebeamperpatch) + "\n")
     predict_file.write("gaincal.caltype=" + caltype + "\n")
+    predict_file.close()
 
+## Writes an applycal.parset file
+#
+# @param msin The Solar MS
+# @param msout Output file name ("." overwrites the msin file)
+# @param datacolumn_in The datacolumn the command modifies
+# @param datacolumn_out The datacolumn which containsthe calibrated values
+# @param calibrator Calibrator MS
+# @param updateweights The updateweights option, Boolean value
 def make_applycal_file(msin, msout, datacolumn_in, datacolumn_out, calibrator, updateweights):
     applycal_file = open("applycal.parset", "w")
     applycal_file.write("msin=" + msin + "\n")
@@ -203,7 +251,15 @@ def make_applycal_file(msin, msout, datacolumn_in, datacolumn_out, calibrator, u
     applycal_file.write("steps=[applycal]\n\n")
     applycal_file.write("applycal.parmdb=" + calibrator + "/instrument\n")
     applycal_file.write("applycal.updateweights=" + str(updateweights) + "\n")
+    applycal_file.close()
 
+## Writes an applybeam.parset file
+#
+# @param msin The Solar MS
+# @param msout Output file name ("." overwrites the msin file)
+# @param datacolumn_in The datacolumn the command modifies
+# @param datacolumn_out The datacolumn which containsthe calibrated values
+# @param updateweights The updateweights option, Boolean value
 def make_applybeam_file(msin, msout, datacolumn_in, datacolumn_out, updateweights):
     applybeam_file = open("applybeam.parset", "w")
     applybeam_file.write("msin=" + msin + "\n")
@@ -212,7 +268,12 @@ def make_applybeam_file(msin, msout, datacolumn_in, datacolumn_out, updateweight
     applybeam_file.write("msout.datacolumn=" + datacolumn_out + "\n")
     applybeam_file.write("steps=[applybeam]\n")
     applybeam_file.write("applybeam.updateweights=" + str(updateweights) + "\n")
+    applybeam_file.close()
 
+## Writes a new sourcedb file with LOFAR's "makesourcedb" command
+#
+# @param input Skymodel file
+# @param output Name of the created sourcedb
 def make_sourcedb(input, output):
     source_output = output
     input_string = "in=" + input
@@ -241,17 +302,14 @@ def make_sourcedb(input, output):
     else:
         print("Please specify the filename with a \'.sourcedb\' extension \n")
 
-def read_MS_info(MS_info_dict):
-    with open('MS_info.csv', 'rb') as MSfile:
-        reader = csv.reader(MSfile)
-        next(reader, None) # Skips header
-        rows = list(reader)
-        for row in rows:
-            if row:
-                MS_info_dict[row[0]] = [row[1], row[2], row[3]]
-
-    return MS_info_dict
-
+## Calculates a datetime object into calculation steps used in wsclean
+#
+# @param start_datetime a Datetime object of the starting time
+# @param end_datetime a Datetime object of the ending time
+# @param ms_starttime The starting Datetime of the Solar MS in question
+# @param ms_endtime Ending Datetime of the Solar MS
+# @param nsteps The amount of images/steps in the Solar MS
+# @param time_format The format used in the Datetime objects
 def calculate_real_time_into_steps(start_datetime, end_datetime, ms_starttime, ms_endtime, nsteps, time_format):
     start_datetime_obj = datetime.strptime(start_datetime.strip(), time_format.get())
     end_datetime_obj = datetime.strptime(end_datetime.strip(), time_format.get())
