@@ -49,26 +49,26 @@ An example config file contains the following options (in whatever order):
 
 If all of the options are not specified or not used in wsclean, specify it under menu option “settings” -> “Manage the config file”. The program will also exclude options that are not specified in the configuration file or are mistyped.
 
-####.fits file:
+#### .fits file:
 
 The selected .fits file which can be plotted via the “View” button.
 
-####Solar MS:
+#### Solar MS:
 
 The measurement dataset for the Sun.
 The measurement set consists of a set ID and a subband. An example measurement set with an ID of L242124 and a subband of 160 would be called ``L242124_SB160_uv.dppp.MS``. Handling the measurement sets in the imaging tool is done by an ID input (string) and a subband input (integer).
 
 If for some reason the MS file is in another format than the default, the user can change the “MS input format” option in the menu bar of the program.
 
-####Calibrator MS:
+#### Calibrator MS:
 
 Calibrator measurement dataset which is used in calibrating the Solar MS data via NDPPP commands. Make sure your calibrator MS has a matching subband to the Solar MS you’re working on.
 
-####Calibrator name tag:
+#### Calibrator name tag:
 
 The “name tag” for our calibrator object. Check under the sourcedb input file what the calibrator abbreviation (TauAGG, VirA, CygA etc.) is in your skymodel data.
 
-####Sourcedb input file:
+#### Sourcedb input file:
 
 A .skymodel file which specifies ???
 Changing the sourcedb input file creates a new sourcedb output file.
@@ -85,35 +85,35 @@ The command functions in the same way as LOFAR’s command ``makesourcedb in=[in
 
 The following commands can be run inside the LOFAR imaging tool:
 
-####NDPPP predict.parset
+#### NDPPP predict.parset
 
 Builds a new predict.parset file for the data corresponding to the input information (Calibrator, Solar MS, Calibrator nametag) and runs LOFAR’s command ``NDPPP predict.parset`` which predicts things?
 
-###NDPPP applycal.parset
+### NDPPP applycal.parset
 
 Builds a new applycal.parset file for the data corresponding to the input information (Calibrator MS, Solar MS, Calibrator nametag) and runs LOFAR’s command ``NDPPP applycal.parset`` which applies calibrator?
 
-####NDPPP applybeam.parset
+#### NDPPP applybeam.parset
 
 Builds a new applybeam.parset file for the data corresponding to the input information (Calibrator MS, Solar MS, Calibrator nametag) and runs LOFAR’s command ``NDPPP applybeam.parset`` which produces a CORRECTED_DATA column into the Solar MS by doing ?
 
-####wsclean
+#### wsclean
 
 Runs the LOFAR command ``wsclean`` which produces the .fits files corresponding to the configuration options provided in the config file.
 After the wsclean operation is complete, the terminal log text field will output the full command.
 If the wsclean runs almost instantly and doesn’t produce any .fits files it may be because the specified data column is not found on the Solar MS file. Make sure you’ve specified the correct data column in your config file and that you have run the NDPPP commands for that file if needed.
 If an error is encountered: check the output in the terminal log first to see if there’s maybe a typo in the configuration file and make sure you have LOFAR specified in the terminal before running the program.
 
-####Run a coordinate transformation
+#### Run a coordinate transformation
 
-####Plot & save multiple .fits files
+#### Plot & save multiple .fits files
 
 <div style="page-break-after: always;"></div>
 
 Used to save multiple .fits files at once. The command opens a file dialog where the user can [ctrl] + [click] multiple files to be saved. The saved plot will have a naming convention matching its .fits file.
 
 
-##Making images with LOFAR data
+## Making images with LOFAR data
 
 Run the following steps to create plotted data from your chosen measurement sets and skymodel files:
 
@@ -127,7 +127,7 @@ button or by choosing “Plot & save multiple .fits files” and choosing the wa
 <li>Save the image with the plot window’s save functionality</li>
 </ol>
 
-##Example run (TL;DR)
+## Example run (TL;DR)
 
 To avoid reading this whole instruction sheet here’s an example on how to produce some data from some given files.
 Let’s say you’re working with the following files:
