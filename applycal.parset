@@ -1,8 +1,8 @@
-msin=L242124_SB160_uv.dppp.MS
+msin=L242126_SB001_uv.dppp.MS
 msout=.
 msin.datacolumn=DATA
 msout.datacolumn=CORR_NO_BEAM
 steps=[applycal]
 
-applycal.parmdb=L242124_SB185_uv.dppp.MS/instrument
+applycal.parmdb=L242124_SB001_uv.dppp.MS/instrument
 applycal.updateweights=True

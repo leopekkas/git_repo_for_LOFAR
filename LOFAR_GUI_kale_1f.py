@@ -8,6 +8,7 @@ from File_reader import make_applybeam_file, print_parset, make_sourcedb, print_
 from fits_plotting_tool import save_fits, produce_video, icrs_to_helio, plot_single_fits
 from UI_helper_functions import disableButtons, enableButtons, setUpCheckbuttons, setUpPredictEntries, setUpApplycalEntries, setUpApplybeamEntries
 from UI_helper_functions import make_info_buttons, proceed_warning_message
+from TextBox import TextBox
 import os
 import sys
 
@@ -512,12 +513,12 @@ def change_input_skymodel():
 
 skymodel_input_label = Label(left_frame, text="Sky model: ", font=(main_font, 11), bg=frame_color)
 main_row_ind += 1
-skymodel_input_label.grid(row=main_row_ind, column=0, sticky = W + N, pady=(5, 0), padx=(80, 5))
+skymodel_input_label.grid(row=main_row_ind, column=0, sticky = W + N, pady=(5, 0), padx=(80, 0))
 
 view_skymodel_btn = Button(left_frame, text="View", command=skymodel_contents, width=view_width)
 view_skymodel_btn.grid(row=main_row_ind, column=view_column + 1, padx=1, pady=(0,0), sticky=W)
 change_skymodel_btn = Button(left_frame, text="Load", command=change_input_skymodel, width=view_width)
-change_skymodel_btn.grid(row=main_row_ind, column=view_column, padx=1, pady=(0,0), sticky = W)
+change_skymodel_btn.grid(row=main_row_ind, column=view_column, padx=1, pady=(0,0))
 
 skymodel_input_name_label = Label(left_frame, textvariable=skymodel_input, font=(secondary_font, 11), bg=frame_color)
 main_row_ind += 1
@@ -556,13 +557,13 @@ change_open = BooleanVar(root, False)
 def change_calibrator(index, MS_input_string):
     if change_open.get() == False:
         change_open.set(True)
-        calibrator_id_entry_feed = Entry(left_frame, text=" Calibrator ID", font=(main_font, 11), width=8)
+        calibrator_id_entry_feed = Entry(left_frame, text="Calibrator ID", font=(main_font, 9), width=8)
         calibrator_id_entry_feed.delete(0, 'end')
         calibrator_id_entry_feed.grid(row=index, column=1, padx=(2, 1), pady=(4,5), sticky=W)
         calibrator_id_entry_feed.insert(0, "ID:")
         calibrator_id_entry_feed.config(fg='grey')
 
-        calibrator_SB_entry_feed = Entry(left_frame, text="Calibrator Subband", font=(main_font, 11), width=7)
+        calibrator_SB_entry_feed = Entry(left_frame, text="Calibrator Subband", font=(main_font, 9), width=8)
         calibrator_SB_entry_feed.delete(0, 'end')
         calibrator_SB_entry_feed.grid(row=index, column=2, padx=(0, 4), pady=(4,5), sticky=W)
         calibrator_SB_entry_feed.insert(0, "Subband:")
@@ -691,13 +692,13 @@ change_MS_open = BooleanVar(root, False)
 def change_MS(index, MS_input_string):
     if change_MS_open.get() == False:
         change_MS_open.set(True)
-        MS_id_entry_feed = Entry(left_frame, text="Solar MS ID", font=(main_font, 11), width=8)
+        MS_id_entry_feed = Entry(left_frame, text="Solar MS ID", font=(main_font, 9), width=8)
         MS_id_entry_feed.delete(0, 'end')
         MS_id_entry_feed.grid(row=index, column=1, padx=(2, 1), pady=(4,5), sticky=W)
         MS_id_entry_feed.insert(0, "ID:")
         MS_id_entry_feed.config(fg='grey')
 
-        MS_SB_entry_feed = Entry(left_frame, text="Solar MS Subband", font=(main_font, 11), width=7)
+        MS_SB_entry_feed = Entry(left_frame, text="Solar MS Subband", font=(main_font, 9), width=8)
         MS_SB_entry_feed.delete(0, 'end')
         MS_SB_entry_feed.grid(row=index, column=2, padx=(0, 4), pady=(4,5), sticky=W)
         MS_SB_entry_feed.insert(0, "Subband:")
@@ -808,7 +809,7 @@ calibrator_nametag_entry.insert(0, "VirA")
 calibrator_nametag_entry.config(fg='grey')
 
 main_row_ind+=1
-calibrator_nametag_label.grid(row=main_row_ind, column=0, sticky = W + N, pady=5, padx=(80, 5))
+calibrator_nametag_label.grid(row=main_row_ind, column=0, sticky = W + N, pady=5, padx=(80, 0))
 calibrator_nametag_entry.grid(row=main_row_ind, column=1, columnspan=3, sticky = W+N, pady=4, padx=(0, 5))
 
 def handle_focus_in_nametag(_):
@@ -835,7 +836,7 @@ calibrator_nametag_entry.bind("<Return>", handle_enter_nametag)
 
 sourcedb_output_label = Label(left_frame, text="Sourcedb file: ", font=(main_font, 11), bg=frame_color)
 main_row_ind += 1
-sourcedb_output_label.grid(row=main_row_ind, column=0, sticky = W + N, pady=5, padx=(80, 5))
+sourcedb_output_label.grid(row=main_row_ind, column=0, sticky = W + N, pady=5, padx=(80, 0))
 
 sourcedb_output_entry = Entry(left_frame, text="Ateam_LBA_CC.sourcedb", font=(main_font, 11), width=20)
 sourcedb_output_entry.insert(0, predict_sourcedb_output.get())
@@ -874,7 +875,7 @@ make_info_buttons(left_frame, command_btns_index, root)
 
 predict_btn = Button(left_frame, text="NDPPP predict.parset", command=predict_clicked, width=commands_btn_width)
 main_row_ind += 1
-predict_btn.grid(row=main_row_ind, column=0, sticky = W+N, pady=3, padx=(70, 3))
+predict_btn.grid(row=main_row_ind, column=0, sticky = W+N, pady=3, padx=(70, 0))
 buttons.append(predict_btn)
 
 def view_predict_clicked():
@@ -900,7 +901,7 @@ kill_predict_btn.grid(row=main_row_ind, column=2, sticky = W, pady=3, padx=(0, 1
 
 applycal_btn = Button(left_frame, text="NDPPP applycal.parset", command=applycal_clicked, width=commands_btn_width)
 main_row_ind += 1
-applycal_btn.grid(row=main_row_ind, column=0, sticky = W+N, pady=3, padx=(70, 3))
+applycal_btn.grid(row=main_row_ind, column=0, sticky = W+N, pady=3, padx=(70, 0))
 buttons.append(applycal_btn)
 
 def view_applycal_clicked():
@@ -926,7 +927,7 @@ kill_applycal_btn.grid(row=main_row_ind, column=2, sticky = W, pady=3, padx=(0, 
 
 applybeam_btn = Button(left_frame, text="NDPPP applybeam.parset", command=applybeam_clicked, width=commands_btn_width)
 main_row_ind += 1
-applybeam_btn.grid(row=main_row_ind, column=0, sticky = W+N, pady=3, padx=(70, 3))
+applybeam_btn.grid(row=main_row_ind, column=0, sticky = W+N, pady=3, padx=(70, 0))
 buttons.append(applybeam_btn)
 
 def view_applybeam_clicked():
@@ -961,7 +962,7 @@ imaging_title.grid(row=main_row_ind, column=0, columnspan=2, sticky = W + N, pad
 
 config_file_label = Label(left_frame, text="Configuration file: ", font=(main_font, 11), bg=frame_color)
 main_row_ind+=1
-config_file_label.grid(row=main_row_ind, column=0, sticky = W + N, pady=(5,0), padx=(80, 5))
+config_file_label.grid(row=main_row_ind, column=0, sticky = W + N, pady=(5,0), padx=(80, 0))
 
 # Change config files
 def change_config():
@@ -1000,7 +1001,7 @@ config_file_name_label.grid(row=main_row_ind, column=0, columnspan=2, sticky = W
 
 wsclean_btn = Button(left_frame, text="wsclean", command=wsclean_clicked, width=commands_btn_width)
 main_row_ind += 1
-wsclean_btn.grid(row=main_row_ind, column=0, sticky = W+N, pady=3, padx=(70, 3))
+wsclean_btn.grid(row=main_row_ind, column=0, sticky = W+N, pady=3, padx=(70, 0))
 buttons.append(wsclean_btn)
 
 def view_wsclean_clicked():
@@ -1048,7 +1049,7 @@ def plot_clicked():
     plot_single_fits(fits_file_path.get())
 
 change_fits_btn = Button(left_frame, text="Load", command=change_fits, width=view_width)
-change_fits_btn.grid(row=main_row_ind, column=view_column, padx=(0, 5), pady=(2,0), sticky = W)
+change_fits_btn.grid(row=main_row_ind, column=view_column, padx=1, pady=(2,0))
 
 view_fits_btn = Button(left_frame, text="View", command=plot_clicked, width=view_width)
 view_fits_btn.grid(row=main_row_ind, column=view_column + 1, padx=1, pady=(2,0), sticky=W)
@@ -1088,11 +1089,11 @@ video_btn.grid(row=main_row_ind, column=0, sticky = N + W, padx=(70, 5), pady=3)
 ############################################
 
 # Text box for an information feed
-info_text = TextBox(right_frame, "Information feed", 36, 70)
+info_text = TextBox(right_frame, "Information feed", 37, 70)
 info_text.addHighlightTextEntry()
 
 # Text box for the terminal feed information
-terminal_log = TextBox(right_bottom_frame, "Terminal log", 19, 70)
+terminal_log = TextBox(right_bottom_frame, "Terminal log", 23, 70)
 terminal_log.enableTerminalRedirect()
 
 def on_closing():

@@ -1,6 +1,6 @@
 from Tkinter import Label, Text, Scrollbar, E, W, N, S, Button, Entry
 import sys
-from Redirect_py2 import *
+from Redirect import *
 
 ## Initializes a textfield for the user with a scrollbar
 #

@@ -160,8 +160,6 @@ def read_config(filename, bool_vars, input_set, MS_id, time_format):
 # @param filename The configuration file in String format
 # @param textfield The Tkinter Text widget that the information will be written into
 def print_config(filename, textfield):
-    textfield.config(state='normal')
-
     try:
         file = open(filename)
         textfield.insert('end', "The config file contains the following options: \n")
@@ -179,8 +177,6 @@ def print_config(filename, textfield):
 # @param filename The skymodel file in String format
 # @param textfield The Tkinter Text widget that the information will be written into
 def print_skymodel(filename, textfield):
-    textfield.config(state='normal')
-
     try:
         file = open(filename)
         textfield.insert('end', "The sourcedb file contains the following lines: \n")
@@ -199,7 +195,6 @@ def print_skymodel(filename, textfield):
 # @param filename The predict.parset file in String format
 # @param textfield The Tkinter Text widget that the information will be written into
 def print_parset(filename, textfield):
-    textfield.config(state='normal')
     textfield.insert('end', "The " + filename + " file contains the following lines: \n")
 
     try:
