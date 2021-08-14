@@ -3,11 +3,6 @@ import sys
 from Redirect import *
 
 ## Initializes a textfield for the user with a scrollbar
-#
-# @param frame Tkinter frame where the textbox is inserted into
-# @param title Title for the TextBox
-# @param height Height in pixels for the text field
-# @param width Width in pixels for the text field
 class TextBox:
     ## Initializer
     #
