@@ -6,8 +6,8 @@ from Redirect import *
 from File_reader import read_config, print_config, make_predict_file, make_applycal_file, lines_in_wsclean
 from File_reader import make_applybeam_file, print_parset, make_sourcedb, print_skymodel
 from fits_plotting_tool import save_fits, produce_video, icrs_to_helio, plot_single_fits
-from UI_helper_functions import disableButtons, enableButtons, setUpCheckbuttons, setUpTerminalLog, setUpInformationLog, setUpPredictEntries, setUpApplycalEntries, setUpApplybeamEntries
-from UI_helper_functions import writeToInfoFeed, writeToInfoFeedNoLinebreak, make_info_buttons, proceed_warning_message
+from UI_helper_functions import disableButtons, enableButtons, setUpCheckbuttons, setUpPredictEntries, setUpApplycalEntries, setUpApplybeamEntries
+from UI_helper_functions import make_info_buttons, proceed_warning_message
 import os
 import sys
 
@@ -110,7 +110,7 @@ def multiple_plot_clicked():
     lst = list(filez)
     index = 0
     if len(lst) == 0:
-        writeToInfoFeed("No file(s) chosen \n", info_text)
+        info_text.writeToFeed("No file(s) chosen \n")
     else:
         lst = list(filez)
         index = 0
@@ -134,7 +134,7 @@ def video_clicked():
         produce_video(lst)
         print("Saved a video with the name \"video.mp4\" \n")
     except:
-        writeToInfoFeed("No file(s) chosen \n", info_text)
+        info_text.writeToFeed("No file(s) chosen \n")
 
 def manage_predict_clicked():
     predict_main_window = Toplevel(root)
@@ -207,7 +207,7 @@ def change_fits():
                                                         ("all files", "*")))
 
     if not filename:
-        writeToInfoFeed("Change the .fits file: No file chosen \n", info_text)
+        info_text.writeToFeed("Change the .fits file: No file chosen \n")
     else:
         fits_file_path.set(filename)
 
@@ -397,22 +397,18 @@ frame_color = 'grey'
 main_font = "Times"
 secondary_font = "Courier"
 
-# Frame geometry
-frame_height = 950
-frame_width = 1518
-
 # Basic configuration of the main window
 root.title("LOFAR GUI 1.0f")
 root.config(bg=main_color)
-root.geometry('%dx%d' % (frame_width, frame_height))
 root.columnconfigure(0, weight=0)
 root.columnconfigure(1, weight=1)
 root.rowconfigure(1, weight=1)
+root.rowconfigure(0, weight=1)
 
 main_row_ind = -1
 
 # The "Left" side of the main window
-left_frame = Frame(root, width=620, height=frame_height, bg=frame_color)
+left_frame = Frame(root, width=620, bg=frame_color)
 left_frame.grid(row=0, column=0, columnspan=1, rowspan=2, sticky=W+S+E+N, padx=(4, 2), pady=4)
 left_frame.grid_propagate(False)
 
@@ -427,13 +423,13 @@ main_row_ind += 1
 lofar_title.grid(row=main_row_ind, column=0, columnspan=3, sticky=W+N, pady=(40, 35), padx=(50, 5))
 
 # The "Right" side of the main window
-right_frame = Frame(root, height=750, background=frame_color)
+right_frame = Frame(root, background=frame_color)
 right_frame.grid(row=0, column=1, columnspan=2, sticky=W+E+S+N, padx=(2, 4), pady=(4, 2))
 right_frame.columnconfigure(0, weight=1)
 right_frame.rowconfigure(1, weight=1)
 
 # The "Bottom right" frame
-right_bottom_frame = Frame(root, height=300, bg=frame_color)
+right_bottom_frame = Frame(root, bg=frame_color)
 right_bottom_frame.grid(row=1, column=1, columnspan=2, sticky=W+E+S+N, padx=(2, 4), pady=(2, 4))
 right_bottom_frame.columnconfigure(0, weight=1)
 right_bottom_frame.rowconfigure(1, weight=1)
@@ -498,7 +494,7 @@ def change_input_skymodel():
                                                         ("all files", "*")))
 
     if not filename:
-        writeToInfoFeed("Change the sourcedb file: No file chosen \n", info_text)
+        info_text.writeToFeed("Change the sourcedb file: No file chosen \n")
     else:
         skymodel_input_path.set(filename)
 
@@ -542,13 +538,13 @@ def view_calibrator_clicked():
         full_command = "msoverview in=" + calibrator_file_name.get() + " verbose=T"
         p = sub.Popen(["msoverview", second_command, "verbose=T"], stdout=sub.PIPE)
         for line in p.stdout:
-            writeToInfoFeedNoLinebreak(line, info_text)
-        writeToInfoFeed("", info_text)
+            info_text.writeToFeedNoLinebreak(line)
+        info_text.writeToFeed("")
         view_calibrator_btn.update()
         enableButtons(buttons)
 
     except (OSError, KeyboardInterrupt):
-        writeToInfoFeed("Error in reading the .MS-file contents \n", info_text)
+        info_text.writeToFeed("Error in reading the .MS-file contents \n")
         view_calibrator_btn.update()
         enableButtons(buttons)
 
@@ -645,7 +641,7 @@ def change_calibrator(index, MS_input_string):
             calibrator_id_entry_feed.bind("<Return>", handle_enter_calibrator)
 
     else:
-        writeToInfoFeed("Press enter to close the change window\n", info_text)
+        info_text.writeToFeed("Press enter to close the change window\n")
 
 change_calibrator_btn = Button(left_frame, text="Load", command= lambda: change_calibrator(5, MS_input_variable.get()), width=view_width)
 change_calibrator_btn.grid(row=main_row_ind, column=view_column, padx=1, pady=(2,0))
@@ -674,14 +670,14 @@ def view_MS_clicked():
         p = sub.Popen(["msoverview", second_command, "verbose=T"], stdout=sub.PIPE)
         for line in p.stdout:
             output_file.write(line)
-            writeToInfoFeedNoLinebreak(line, info_text)
-        writeToInfoFeed("", info_text)
+            info_text.writeToFeedNoLinebreak(line)
+        info_text.writeToFeed("")
         output_file.close()
         view_MS_btn.update()
         enableButtons(buttons)
 
     except (OSError, KeyboardInterrupt):
-        writeToInfoFeed("Error in reading the .MS-file contents \n", info_text)
+        info_text.writeToFeed("Error in reading the .MS-file contents \n")
         view_MS_btn.update()
         enableButtons(buttons)
 
@@ -781,7 +777,7 @@ def change_MS(index, MS_input_string):
             MS_id_entry_feed.bind("<Return>", handle_enter_MS)
 
     else:
-        writeToInfoFeed("Press enter to close the change MS window\n", info_text)
+        info_text.writeToFeed("Press enter to close the change MS window\n")
 
 change_MS_btn = Button(left_frame, text="Load", command= lambda: change_MS(7, MS_input_variable.get()), width=view_width)
 change_MS_btn.grid(row=main_row_ind, column=view_column, padx=1, pady=(2,0))
@@ -975,7 +971,7 @@ def change_config():
                                                         ("all files", "*")))
 
     if not filename:
-        writeToInfoFeed("Change the config file: No file chosen \n", info_text)
+        info_text.writeToFeed("Change the config file: No file chosen \n")
     else:
         config_file_path.set(filename)
 
@@ -1069,7 +1065,7 @@ def coord_clicked():
     filename = fits_file_path.get()
 
     if not filename:
-        writeToInfoFeed("No file chosen for coordinate transformation \n", info_text)
+        info_text.writeToFeed("No file chosen for coordinate transformation \n")
     else:
         icrs_to_helio(filename)
 
@@ -1089,13 +1085,15 @@ video_btn = Button(left_frame, text="Wrap multiple plots into a video", width=25
 main_row_ind += 1
 video_btn.grid(row=main_row_ind, column=0, sticky = N + W, padx=(70, 5), pady=3)
 
+############################################
+
 # Text box for an information feed
-info_text = setUpInformationLog(right_frame, main_font, frame_color)
+info_text = TextBox(right_frame, "Information feed", 36, 70)
+info_text.addHighlightTextEntry()
 
-# !TODO A function for displaying information on the text widget
-
-# Text log for keeping a track of commands we've already run
-setUpTerminalLog(right_bottom_frame, main_font, frame_color)
+# Text box for the terminal feed information
+terminal_log = TextBox(right_bottom_frame, "Terminal log", 19, 70)
+terminal_log.enableTerminalRedirect()
 
 def on_closing():
     root.destroy()

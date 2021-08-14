@@ -7,23 +7,6 @@ def proceed_warning_message(titletext, text):
     warningboxresult = tkMessageBox.askyesno(title=titletext, message=text)
     return warningboxresult
 
-## Writes to a Tkinter Text widget, outputs a distinct line after the input line
-#
-# @param line String value which is written into the text widget
-# @param info_text A Tkinter text widget
-def writeToInfoFeed(line, info_text):
-    info_text.insert('end', line + "\n")
-    info_text.insert('end', "\n************************************************************\n\n")
-    info_text.see('end')
-
-## Writes to a Tkinter Text widget without a line break
-#
-# @param line String value which is written into the text widget
-# @param info_text A Tkinter text widget
-def writeToInfoFeedNoLinebreak(line, info_text):
-    info_text.insert('end', line)
-    info_text.see('end')
-
 ## Disables a list of buttons
 def disableButtons(buttons):
     for b in buttons:
@@ -235,97 +218,6 @@ def setUpCheckbuttons(config_window, bool_vars, config_file_name):
 
     row_index += 1
     make_psf_cb = Checkbutton(config_window, text="make-psf", variable=bool_vars[17]).grid(row=row_index, column=3, padx=2, pady=5, sticky=W + N)
-
-## Terminal log (Make its own class)
-def setUpTerminalLog(right_bottom_frame, main_font, frame_color):
-    font_size = 9
-
-    log_title_label = Label(right_bottom_frame, text="Terminal log", font=(main_font, 13), bg=frame_color)
-
-    log_title_label.grid(row=0, column=0, padx=5, pady=(10, 5))
-
-    logscrollbar = Scrollbar(right_bottom_frame)
-    logscrollbar.grid(row=1, column=1, padx=2, pady=(0, 5), sticky=N+S)
-
-    text_log = Text(right_bottom_frame, height=18, width=55, yscrollcommand=logscrollbar.set, state="normal", font=("Courier", font_size))
-    logscrollbar.config(command=text_log.yview)
-    text_log.grid(row=1, column=0, padx=(5, 0), pady=(0, 5), sticky=N+S+E+W)
-    old_stdout = sys.stdout
-    sys.stdout = Redirect(text_log)
-
-## Information log (Make its own class)
-def setUpInformationLog(right_frame, main_font, frame_color):
-    font_size = 9
-
-    info_title_label = Label(right_frame, text="Information feed", font=(main_font, 13), bg=frame_color)
-    info_title_label.grid(row=0, column=0, padx=5, pady=(10, 0))
-
-    search_entry = Entry(right_frame, text="Find a keyword:", font=(main_font, 10))
-    search_entry.grid(row=0, column=1, padx=5, pady=(8, 2), sticky=E)
-
-    search_entry.insert(0, "Find a keyword:")
-    search_entry.config(fg='grey')
-
-    search_btn = Button(right_frame, text="Highlight", font=(main_font, 11))
-    search_btn.grid(row=0, column=2, padx=2, pady=(8, 2), sticky=W)
-
-    yscrollbar = Scrollbar(right_frame)
-    yscrollbar.grid(row=1, column=4, padx=2, pady=5, sticky=N+S)
-
-    info_text = Text(right_frame, height=30, width=65, yscrollcommand=yscrollbar.set, state="normal", font=("Courier", font_size))
-    yscrollbar.config(command=info_text.yview)
-    info_text.grid(row=1, column=0, columnspan=4, padx=(5, 0), pady=5, sticky=N+S+E+W)
-
-    def find():
-        #remove tag 'found' from index 1 to END
-        info_text.tag_remove('found', '1.0', 'end')
-
-        #returns to widget currently in focus
-        s = search_entry.get()
-        if s:
-            idx = '1.0'
-            lastidx='end'
-
-            while 1:
-                #searches for desired string from index 1
-                idx = info_text.search(s, idx, nocase=1,
-                                  stopindex='end')
-                if not idx: break
-
-                #last index sum of current index and
-                #length of text
-                lastidx = '%s+%dc' % (idx, len(s))
-
-                #overwrite 'Found' at idx
-                info_text.tag_add('found', idx, lastidx)
-                idx = lastidx
-
-            info_text.see(lastidx)
-
-            #mark located string as red
-            info_text.tag_config('found', foreground='red')
-
-    def handle_focus_in(_):
-        search_entry.delete(0, 'end')
-        search_entry.config(fg='black')
-
-    def handle_focus_out(_):
-        search_entry.delete(0, 'end')
-        search_entry.config(fg='grey')
-        search_entry.insert(0, 'Find a keyword')
-
-    def handle_enter(txt):
-        find()
-        handle_focus_out('dummy')
-        handle_focus_in('dummy')
-
-    search_entry.bind("<FocusIn>", handle_focus_in)
-    search_entry.bind("<FocusOut>", handle_focus_out)
-    search_entry.bind("<Return>", handle_enter)
-
-    search_btn.config(command= lambda: handle_enter('dummy'))
-
-    return info_text
 
 ## Creates an info widget
 #

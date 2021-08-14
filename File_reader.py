@@ -3,7 +3,7 @@ import subprocess as sub
 import os, errno
 import shutil
 from datetime import datetime, time, timedelta
-from UI_helper_functions import proceed_warning_message, writeToInfoFeed
+from UI_helper_functions import proceed_warning_message
 import csv
 
 ## Returns a list of all the lines in the wsclean command depending on the configuration settings
@@ -170,9 +170,9 @@ def print_config(filename, textfield):
             textfield.insert('end', l)
 
         file.close()
-        writeToInfoFeed("", textfield)
+        textfield.writeToFeed("")
     except IOError:
-        writeToInfoFeed("No configuration file with the name \"" + os.path.basename(filename) + "\" found", textfield)
+        textfield.writeToFeed("No configuration file with the name \"" + os.path.basename(filename) + "\" found")
 
 ## Prints the contents of the skymodel file
 #
@@ -189,10 +189,10 @@ def print_skymodel(filename, textfield):
             textfield.insert('end', l)
 
         file.close()
-        writeToInfoFeed("", textfield)
+        textfield.writeToFeed("", textfield)
 
     except IOError:
-        writeToInfoFeed("No configuration file with the name \"" + os.path.basename(filename) + "\" found", textfield)
+        textfield.writeToFeed("No configuration file with the name \"" + os.path.basename(filename) + "\" found")
 
 ## Prints the contents of the specified .parset file
 #
@@ -209,9 +209,9 @@ def print_parset(filename, textfield):
             textfield.insert('end', l)
 
         file.close()
-        writeToInfoFeed("", textfield)
+        textfield.writeToFeed("")
     except IOError:
-        writeToInfoFeed("No configuration file with the name \"" + os.path.basename(filename) + "\" found", textfield)
+        textfield.writeToFeed("No configuration file with the name \"" + os.path.basename(filename) + "\" found")
 
 ## Writes a predict.parset file
 #

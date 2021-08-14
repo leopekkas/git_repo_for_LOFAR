@@ -1,6 +1,7 @@
 from Tkinter import TclError
 import sys
 
+## Redirects text information from the terminal to a Tkinter widget
 class Redirect():
     def __init__(self, widget):
         self.widget = widget
