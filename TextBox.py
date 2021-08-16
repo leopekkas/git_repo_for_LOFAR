@@ -18,10 +18,10 @@ class TextBox:
         self.font_size = 9
         self.font_name = "Times"
         self.frame_color = 'grey'
+        self.logscrollbar = Scrollbar(frame)
 
         log_title_label = Label(frame, text=self.title, font=(self.font_name, 13), bg=self.frame_color)
         log_title_label.grid(row=0, column=0, padx=5, pady=(10, 5))
-        self.logscrollbar = Scrollbar(frame)
         self.text_log = Text(frame, height=self.height, width=self.width, yscrollcommand=self.logscrollbar.set, state="normal", font=("Courier", self.font_size))
         ##
         # @var logscrollbar Tkinter Scrollbar
