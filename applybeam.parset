@@ -1,6 +1,0 @@
-msin=L242126_SB001_uv.dppp.MS
-msout=.
-msin.datacolumn=CORR_NO_BEAM
-msout.datacolumn=CORRECTED_DATA
-steps=[applybeam]
-applybeam.updateweights=True

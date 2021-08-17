@@ -21,7 +21,7 @@ def plot_single_fits(filename):
         plt.show()
         plt.close('all')
     except ValueError:
-        print("No file with the chosen name found")
+        print("No file with the chosen name found\n")
 
 
 def save_fits(filename, index):
