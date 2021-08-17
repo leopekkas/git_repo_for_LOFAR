@@ -16,7 +16,6 @@ import csv
 #
 # @return a list of all the parts of a wsclean command
 def lines_in_wsclean(myvars, bool_vars, input_set, start_time, end_time):
-
     ws_list = []
 
     ws_list.append("wsclean")
@@ -154,6 +153,17 @@ def read_config(filename, bool_vars, input_set, MS_id, time_format):
 
     # Return a list of terminal inputs
     return ws_list_ret
+
+def read_MS_info(MS_info_dict):
+    with open('MS_info.csv', 'rb') as MSfile:
+        reader = csv.reader(MSfile)
+        next(reader, None) # Skips header
+        rows = list(reader)
+        for row in rows:
+            if row:
+                MS_info_dict[row[0]] = [row[1], row[2], row[3]]
+
+    return MS_info_dict
 
 ## Prints the contents of the configuration file
 #
