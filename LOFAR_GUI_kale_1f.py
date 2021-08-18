@@ -1,6 +1,3 @@
-import sys
-sys.path.insert(1, 'StateManager')
-
 from Tkinter import Tk, Menu, StringVar, IntVar, BooleanVar, Checkbutton, Frame, Label, Button, Scrollbar, Text, Toplevel, OptionMenu, E, W, S, N, PhotoImage, Entry
 import tkFileDialog as filedialog
 import time
@@ -12,18 +9,8 @@ from fits_plotting_tool import save_fits, produce_video, icrs_to_helio, plot_sin
 from UI_helper_functions import disableButtons, enableButtons, setUpCheckbuttons, setUpPredictEntries, setUpApplycalEntries, setUpApplybeamEntries
 from UI_helper_functions import make_info_buttons, proceed_warning_message
 from TextBox import TextBox
-from Save import Save
-from Load import LoadNewValues
+from ButtonFunctions import load_clicked, save_clicked, predict_clicked, applycal_clicked, applybeam_clicked
 import os
-
-def load_clicked():
-    LoadNewValues(skymodel_input, calibrator_file_name, MS_file_name, calibrator_nametag, predict_sourcedb_output, config_file_name, fits_file_name)
-    sourcedb_output_entry.update()
-
-def save_clicked():
-    newsavefile = Save(skymodel_input.get(), MS_file_name.get(), calibrator_file_name.get(), calibrator_nametag.get(), predict_sourcedb_output.get(),
-        "predict.parset", "applycal.parset", "applybeam.parset", config_file_name.get(), fits_file_name.get())
-    newsavefile.saveToSaveFile()
 
 ## Depending on a dropdown variable clicks the correct button (job queue, move to it's own class)
 def checkAndRunDropdownInput(variable):
@@ -35,62 +22,6 @@ def checkAndRunDropdownInput(variable):
         applybeam_clicked()
     elif (variable.get() == "wsclean"):
         wsclean_clicked()
-
-def predict_clicked():
-    disableButtons(buttons)
-    predict_btn.update()
-
-    make_predict_file(calibrator_file_name.get(), predict_msout.get(), calibrator_nametag.get(), predict_sourcedb_output.get(), predict_solint.get(), predict_usebeammodel.get(), predict_onebeamperpatch.get(), predict_caltype.get())
-
-    try:
-        # Run NDPPP predict.parset here
-        p = sub.call(["NDPPP", "predict.parset"])
-        print("NDPPP predict.parset \n")
-    except (OSError, KeyboardInterrupt):
-        print("Error in running NDPPP predict.parset \n")
-        predict_btn.update()
-        enableButtons(buttons)
-
-    predict_btn.update()
-    enableButtons(buttons)
-
-## Click function for the NDPPP applycal.parset command (move to its own class)
-def applycal_clicked():
-    disableButtons(buttons)
-    applycal_btn.update()
-
-    make_applycal_file(MS_file_name.get(), applycal_msout.get(), applycal_datacolumn_in.get(), applycal_datacolumn_out.get(), calibrator_file_name.get(), applycal_updateweights.get())
-
-    try:
-        # Run NDPPP applycal.parset here
-        p = sub.call(["NDPPP", "applycal.parset"])
-        print("NDPPP applycal.parset \n")
-    except (OSError, KeyboardInterrupt):
-        print("Error in running NDPPP predict.parsett \n")
-        applycal_btn.update()
-        enableButtons(buttons)
-
-    applycal_btn.update()
-    enableButtons(buttons)
-
-## Click function for the NDPPP applybeam.parset command (move to its own class)
-def applybeam_clicked():
-    disableButtons(buttons)
-    applybeam_btn.update()
-
-    make_applybeam_file(MS_file_name.get(), applybeam_msout.get(), applybeam_datacolumn_in.get(), applybeam_datacolumn_out.get(), applybeam_updateweights.get())
-
-    try:
-        # Run NDPPP applybeam.parset here
-        p = sub.call(["NDPPP", "applybeam.parset"])
-        print("NDPPP applybeam.parset \n")
-    except (OSError, KeyboardInterrupt):
-        print("Error in running NDPPP predict.parset \n")
-        applybeam_btn.update()
-        enableButtons(buttons)
-
-    applybeam_btn.update()
-    enableButtons(buttons)
 
 ## Click function for wsclean command (move to its own class)
 def wsclean_clicked():
@@ -410,7 +341,6 @@ calibrator_name = StringVar(root, "Virgo")
 skymodel_input_path = StringVar(root, "Ateam_LBA_CC.skymodel.txt")
 skymodel_input = StringVar(root, "Ateam_LBA_CC.skymodel.txt")
 
-use_datetime = BooleanVar(root, True)
 time_format_variable = StringVar(root, "%Y-%m-%d %H:%M:%S")
 
 MS_input_variable = StringVar(root, "ID_SB_uv.dppp.MS")
@@ -900,7 +830,18 @@ command_btns_index = main_row_ind
 
 make_info_buttons(left_frame, command_btns_index, root)
 
-predict_btn = Button(left_frame, text="NDPPP predict.parset", command=predict_clicked, width=commands_btn_width)
+predict_btn = Button(left_frame, text="NDPPP predict.parset", width=commands_btn_width,
+                        command= lambda: predict_clicked(buttons,
+                                                        predict_btn,
+                                                        calibrator_file_name,
+                                                        predict_msout,
+                                                        calibrator_nametag,
+                                                        predict_sourcedb_output,
+                                                        predict_solint,
+                                                        predict_usebeammodel,
+                                                        predict_onebeamperpatch,
+                                                        predict_caltype
+                                                        ))
 main_row_ind += 1
 predict_btn.grid(row=main_row_ind, column=0, sticky = W+N, pady=3, padx=(70, 0))
 buttons.append(predict_btn)
@@ -926,7 +867,16 @@ def kill_predict_clicked():
 kill_predict_btn = Button(left_frame, text="Kill", command=kill_predict_clicked, width=view_width)
 kill_predict_btn.grid(row=main_row_ind, column=2, sticky = W, pady=3, padx=(0, 1))
 
-applycal_btn = Button(left_frame, text="NDPPP applycal.parset", command=applycal_clicked, width=commands_btn_width)
+applycal_btn = Button(left_frame, text="NDPPP applycal.parset", width=commands_btn_width,
+                        command= lambda: applycal_clicked(buttons,
+                                                        applycal_btn,
+                                                        MS_file_name,
+                                                        applycal_msout,
+                                                        applycal_datacolumn_in,
+                                                        applycal_datacolumn_out,
+                                                        calibrator_file_name,
+                                                        applycal_updateweights
+                                                        ))
 main_row_ind += 1
 applycal_btn.grid(row=main_row_ind, column=0, sticky = W+N, pady=3, padx=(70, 0))
 buttons.append(applycal_btn)
@@ -952,7 +902,15 @@ def kill_applycal_clicked():
 kill_applycal_btn = Button(left_frame, text="Kill", command=kill_applycal_clicked, width=view_width)
 kill_applycal_btn.grid(row=main_row_ind, column=2, sticky = W, pady=3, padx=(0, 1))
 
-applybeam_btn = Button(left_frame, text="NDPPP applybeam.parset", command=applybeam_clicked, width=commands_btn_width)
+applybeam_btn = Button(left_frame, text="NDPPP applybeam.parset", width=commands_btn_width,
+                        command= lambda: applybeam_clicked(buttons,
+                                                        applybeam_btn,
+                                                        MS_file_name,
+                                                        applybeam_msout,
+                                                        applybeam_datacolumn_in,
+                                                        applybeam_datacolumn_out,
+                                                        applybeam_updateweights
+                                                        ))
 main_row_ind += 1
 applybeam_btn.grid(row=main_row_ind, column=0, sticky = W+N, pady=3, padx=(70, 0))
 buttons.append(applybeam_btn)

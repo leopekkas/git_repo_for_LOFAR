@@ -26,7 +26,7 @@ class Save:
         applybeamlines = self.readFileLines(self.applybeamfile)
 
         f = asksaveasfile(mode='w', defaultextension='.sav')
-        if f is None: # If dialog is closed with cancel then return nothing
+        if f is None: # If the dialog is closed with cancel then return nothing
             return
 
         f.write(self.skymodel + "\n")
@@ -54,7 +54,7 @@ class Save:
 
         f.close()
 
-    ## Reads the lines from a file and return them in a list
+    ## Reads the lines from a file and returns them in a list
     def readFileLines(self, filename):
         retList = []
         try:
