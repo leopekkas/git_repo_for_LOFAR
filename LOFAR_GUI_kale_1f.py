@@ -4,47 +4,58 @@ import time
 import subprocess as sub
 from Redirect import *
 from File_reader import read_config, print_config, make_predict_file, make_applycal_file, lines_in_wsclean
-from File_reader import make_applybeam_file, print_parset, make_sourcedb, print_skymodel
+from File_reader import make_applybeam_file, print_parset, make_sourcedb
 from fits_plotting_tool import save_fits, produce_video, icrs_to_helio, plot_single_fits
 from UI_helper_functions import disableButtons, enableButtons, setUpCheckbuttons, setUpPredictEntries, setUpApplycalEntries, setUpApplybeamEntries
 from UI_helper_functions import make_info_buttons, proceed_warning_message
 from TextBox import TextBox
 from ButtonFunctions import load_clicked, save_clicked, predict_clicked, applycal_clicked, applybeam_clicked
+from ButtonFunctions import wsclean_clicked, darklightmodeswitch, view_calibrator_clicked, view_MS_clicked
+from ButtonFunctions import skymodel_contents
 import os
 
 ## Depending on a dropdown variable clicks the correct button (job queue, move to it's own class)
 def checkAndRunDropdownInput(variable):
     if (variable.get() == "NDPPP predict.parset"):
-        predict_clicked()
+        predict_clicked(buttons,
+                        predict_btn,
+                        calibrator_file_name,
+                        predict_msout,
+                        calibrator_nametag,
+                        predict_sourcedb_output,
+                        predict_solint,
+                        predict_usebeammodel,
+                        predict_onebeamperpatch,
+                        predict_caltype
+                        )
     elif (variable.get() == "NDPPP applycal.parset"):
-        applycal_clicked()
+        applycal_clicked(buttons,
+                        applycal_btn,
+                        MS_file_name,
+                        applycal_msout,
+                        applycal_datacolumn_in,
+                        applycal_datacolumn_out,
+                        calibrator_file_name,
+                        applycal_updateweights
+                        )
     elif (variable.get() == "NDPPP applybeam.parset"):
-        applybeam_clicked()
+        applybeam_clicked(buttons,
+                        applybeam_btn,
+                        MS_file_name,
+                        applybeam_msout,
+                        applybeam_datacolumn_in,
+                        applybeam_datacolumn_out,
+                        applybeam_updateweights
+                        )
     elif (variable.get() == "wsclean"):
-        wsclean_clicked()
-
-## Click function for wsclean command (move to its own class)
-def wsclean_clicked():
-    # Run NDPPP predict.parset here
-    # Run wsclean here
-    try:
-        disableButtons(buttons)
-        wsclean_btn.update()
-        wscommand = read_config(config_file_name.get(), bool_vars, MS_file_name, MS_id, time_format_variable)
-        if wscommand==-1:
-            print("wsclean exited\n")
-        else:
-            p = sub.call(wscommand)
-            for l in wscommand:
-                print(l),
-            print("\n")
-
-        wsclean_btn.update()
-        enableButtons(buttons)
-    except (OSError, KeyboardInterrupt, TypeError):
-        print("Error in running the wsclean command \n")
-        wsclean_btn.update()
-        enableButtons(buttons)
+        wsclean_clicked(buttons,
+                        wsclean_btn,
+                        config_file_name,
+                        bool_vars,
+                        MS_file_name,
+                        MS_id,
+                        time_format_variable
+                        )
 
 def multiple_plot_clicked():
     filez = filedialog.askopenfilenames(initialdir = os.getcwd(),
@@ -441,9 +452,6 @@ main_row_ind+=1
 file_info_label = Label(left_frame, text="Input data:", font=(main_font, 15, "bold"), bg=frame_color)
 file_info_label.grid(row=main_row_ind, column=0, columnspan=2, sticky = W + N, pady=(10, 10), padx=(80, 0))
 
-def skymodel_contents():
-    print_skymodel(skymodel_input_path.get(), info_text)
-
 def change_input_skymodel():
     filename = filedialog.askopenfilename(initialdir = os.getcwd(),
                                             title="Select a file",
@@ -472,7 +480,7 @@ skymodel_input_label = Label(left_frame, text="Sky model: ", font=(main_font, 11
 main_row_ind += 1
 skymodel_input_label.grid(row=main_row_ind, column=0, sticky = W + N, pady=(5, 0), padx=(80, 0))
 
-view_skymodel_btn = Button(left_frame, text="View", command=skymodel_contents, width=view_width)
+view_skymodel_btn = Button(left_frame, text="View", command= lambda: skymodel_contents(skymodel_input_path, info_text), width=view_width)
 view_skymodel_btn.grid(row=main_row_ind, column=view_column + 1, padx=1, pady=(0,0), sticky=W)
 change_skymodel_btn = Button(left_frame, text="Load", command=change_input_skymodel, width=view_width)
 change_skymodel_btn.grid(row=main_row_ind, column=view_column, padx=1, pady=(0,0))
@@ -487,26 +495,8 @@ calibrator_file_label = Label(left_frame, text="Calibrator measurement set: ", f
 main_row_ind+=1
 calibrator_file_label.grid(row=main_row_ind, column=0, sticky = W + N, pady=(5, 0), padx=(80, 0))
 
-def view_calibrator_clicked():
-    disableButtons(buttons)
-    view_calibrator_btn.update()
-
-    try:
-        second_command = "in=" + calibrator_file_name.get()
-        full_command = "msoverview in=" + calibrator_file_name.get() + " verbose=T"
-        p = sub.Popen(["msoverview", second_command, "verbose=T"], stdout=sub.PIPE)
-        for line in p.stdout:
-            info_text.writeToFeedNoLinebreak(line)
-        info_text.writeToFeed("")
-        view_calibrator_btn.update()
-        enableButtons(buttons)
-
-    except (OSError, KeyboardInterrupt):
-        info_text.writeToFeed("Error in reading the .MS-file contents \n")
-        view_calibrator_btn.update()
-        enableButtons(buttons)
-
-view_calibrator_btn = Button(left_frame, text="View", command=view_calibrator_clicked, width=view_width)
+view_calibrator_btn = Button(left_frame, text="View", width=view_width,
+                                command= lambda: view_calibrator_clicked(buttons, view_calibrator_btn, info_text, calibrator_file_name))
 view_calibrator_btn.grid(row=main_row_ind, column=view_column + 1, padx=1, pady=(2,0), sticky=W)
 
 change_open = BooleanVar(root, False)
@@ -618,28 +608,8 @@ MS_file_label = Label(left_frame, text="Solar MS: ", font=(main_font, 11), bg=fr
 main_row_ind+=1
 MS_file_label.grid(row=main_row_ind, column=0, sticky = W + N, pady=(5, 0), padx=(80, 0))
 
-def view_MS_clicked():
-    disableButtons(buttons)
-    view_MS_btn.update()
-    try:
-        second_command = "in=" + MS_file_name.get()
-        full_command = "msoverview in=" + MS_file_name.get() + " verbose=T"
-        output_file = open("msoverview_output.txt", "w")
-        p = sub.Popen(["msoverview", second_command, "verbose=T"], stdout=sub.PIPE)
-        for line in p.stdout:
-            output_file.write(line)
-            info_text.writeToFeedNoLinebreak(line)
-        info_text.writeToFeed("")
-        output_file.close()
-        view_MS_btn.update()
-        enableButtons(buttons)
-
-    except (OSError, KeyboardInterrupt):
-        info_text.writeToFeed("Error in reading the .MS-file contents \n")
-        view_MS_btn.update()
-        enableButtons(buttons)
-
-view_MS_btn = Button(left_frame, text="View", command=view_MS_clicked, width=view_width)
+view_MS_btn = Button(left_frame, text="View", width=view_width,
+                    command= lambda: view_MS_clicked(buttons, view_MS_btn, info_text, MS_file_name))
 view_MS_btn.grid(row=main_row_ind, column=view_column + 1, padx=1, pady=(2,0), sticky=W)
 
 buttons.append(view_MS_btn)
@@ -984,7 +954,15 @@ config_file_name_label.grid(row=main_row_ind, column=0, columnspan=2, sticky = W
 
 #####################################
 
-wsclean_btn = Button(left_frame, text="wsclean", command=wsclean_clicked, width=commands_btn_width)
+wsclean_btn = Button(left_frame, text="wsclean", width=commands_btn_width,
+                    command= lambda: wsclean_clicked(buttons,
+                                                    wsclean_btn,
+                                                    config_file_name,
+                                                    bool_vars,
+                                                    MS_file_name,
+                                                    MS_id,
+                                                    time_format_variable
+                                                    ))
 main_row_ind += 1
 wsclean_btn.grid(row=main_row_ind, column=0, sticky = W+N, pady=3, padx=(70, 0))
 buttons.append(wsclean_btn)

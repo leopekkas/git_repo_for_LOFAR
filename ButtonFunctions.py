@@ -4,7 +4,7 @@ import subprocess as sub
 
 from Save import Save
 from Load import LoadNewValues
-from File_reader import make_predict_file, make_applycal_file, make_applybeam_file
+from File_reader import make_predict_file, make_applycal_file, make_applybeam_file, print_skymodel, read_config
 from UI_helper_functions import disableButtons, enableButtons
 
 ## Click function for loading a new state into the program
@@ -84,3 +84,82 @@ def applybeam_clicked(buttons, applybeam_btn, MS_file_name, applybeam_msout,
 
     applybeam_btn.update()
     enableButtons(buttons)
+
+## Click function for wsclean command
+def wsclean_clicked(buttons, wsclean_btn, config_file_name, bool_vars, MS_file_name, MS_id, time_format_variable):
+    try:
+        disableButtons(buttons)
+        wsclean_btn.update()
+        wscommand = read_config(config_file_name.get(), bool_vars, MS_file_name, MS_id, time_format_variable)
+        if wscommand==-1:
+            # Do nothing
+            print("wsclean exited\n")
+        else:
+            p = sub.call(wscommand)
+            for l in wscommand:
+                print(l),
+            print("\n")
+
+        wsclean_btn.update()
+        enableButtons(buttons)
+    except (OSError, KeyboardInterrupt, TypeError):
+        print("Error in running the wsclean command \n")
+        wsclean_btn.update()
+        enableButtons(buttons)
+
+## Switches the terminal color between dark and light
+def darklightmodeswitch(menu, info_text, terminal_log):
+    if darklightmode.get() == "Dark mode":
+        darklightmode.set("Light mode")
+        info_text.setDarkMode()
+        terminal_log.setDarkMode()
+    else:
+        darklightmode.set("Dark mode")
+        info_text.setLightMode()
+        terminal_log.setLightMode()
+    menu.entryconfigure(4, label=darklightmode.get())
+
+## Prints the contents of the skymodel file
+def skymodel_contents(skymodel_input_path, info_text):
+    print_skymodel(skymodel_input_path.get(), info_text)
+
+## Prints the contents of the calibrator MS file into the information feed
+def view_calibrator_clicked(buttons, view_calibrator_btn, info_text, calibrator_file_name):
+    disableButtons(buttons)
+    view_calibrator_btn.update()
+
+    try:
+        second_command = "in=" + calibrator_file_name.get()
+        p = sub.Popen(["msoverview", second_command], stdout=sub.PIPE)
+        for line in p.stdout:
+            info_text.writeToFeedNoLinebreak(line)
+        info_text.writeToFeed("")
+        view_calibrator_btn.update()
+        enableButtons(buttons)
+
+    except (OSError, KeyboardInterrupt):
+        info_text.writeToFeed("Error in reading the .MS-file contents")
+        view_calibrator_btn.update()
+        enableButtons(buttons)
+
+## Prints the contents of the MS file into the information feed
+def view_MS_clicked(buttons, view_MS_btn, info_text, MS_file_name):
+    disableButtons(buttons)
+    view_MS_btn.update()
+    try:
+        second_command = "in=" + MS_file_name.get()
+        full_command = "msoverview in=" + MS_file_name.get()
+        output_file = open("msoverview_output.txt", "w")
+        p = sub.Popen(["msoverview", second_command], stdout=sub.PIPE)
+        for line in p.stdout:
+            output_file.write(line)
+            info_text.writeToFeedNoLinebreak(line)
+        info_text.writeToFeed("")
+        output_file.close()
+        view_MS_btn.update()
+        enableButtons(buttons)
+
+    except (OSError, KeyboardInterrupt):
+        info_text.writeToFeed("Error in reading the .MS-file contents")
+        view_MS_btn.update()
+        enableButtons(buttons)
