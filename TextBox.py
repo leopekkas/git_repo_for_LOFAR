@@ -18,13 +18,15 @@ class TextBox:
         self.font_size = 9
         self.font_name = "Times"
         self.frame_color = 'grey'
+        self.textbox_fg = 'black'
+        self.textbox_bg = 'white'
         self.logscrollbar = Scrollbar(frame)
 
         log_title_label = Label(frame, text=self.title, font=(self.font_name, 13), bg=self.frame_color)
         log_title_label.grid(row=0, column=0, padx=5, pady=(10, 5))
         self.text_log = Text(frame, height=self.height, width=self.width, yscrollcommand=self.logscrollbar.set, state="normal", font=("Courier", self.font_size))
-        ##
-        # @var logscrollbar Tkinter Scrollbar
+        self.text_log.config(fg = self.textbox_fg, bg = self.textbox_bg)
+        
         self.logscrollbar.grid(row=1, column=1, padx=2, pady=(0, 5), sticky=N+S)
         self.logscrollbar.config(command=self.text_log.yview)
 
@@ -35,6 +37,18 @@ class TextBox:
 
     def setFontName(self, newFont):
         self.font_name = newFont
+
+    def setDarkMode(self):
+        self.textbox_fg = 'white'
+        self.textbox_bg = 'black'
+        self.text_log["fg"] = self.textbox_fg
+        self.text_log["bg"] = self.textbox_bg
+
+    def setLightMode(self):
+        self.textbox_bg = 'white'
+        self.textbox_fg = 'black'
+        self.text_log["fg"] = self.textbox_fg
+        self.text_log["bg"] = self.textbox_bg
 
     ## Directs print() functions from the terminal to this screen
     def enableTerminalRedirect(self):

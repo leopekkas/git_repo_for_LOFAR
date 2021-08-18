@@ -1,3 +1,6 @@
+import sys
+sys.path.insert(1, 'StateManager')
+
 from Tkinter import Tk, Menu, StringVar, IntVar, BooleanVar, Checkbutton, Frame, Label, Button, Scrollbar, Text, Toplevel, OptionMenu, E, W, S, N, PhotoImage, Entry
 import tkFileDialog as filedialog
 import time
@@ -9,8 +12,18 @@ from fits_plotting_tool import save_fits, produce_video, icrs_to_helio, plot_sin
 from UI_helper_functions import disableButtons, enableButtons, setUpCheckbuttons, setUpPredictEntries, setUpApplycalEntries, setUpApplybeamEntries
 from UI_helper_functions import make_info_buttons, proceed_warning_message
 from TextBox import TextBox
+from Save import Save
+from Load import LoadNewValues
 import os
-import sys
+
+def load_clicked():
+    LoadNewValues(skymodel_input, calibrator_file_name, MS_file_name, calibrator_nametag, predict_sourcedb_output, config_file_name, fits_file_name)
+    sourcedb_output_entry.update()
+
+def save_clicked():
+    newsavefile = Save(skymodel_input.get(), MS_file_name.get(), calibrator_file_name.get(), calibrator_nametag.get(), predict_sourcedb_output.get(),
+        "predict.parset", "applycal.parset", "applybeam.parset", config_file_name.get(), fits_file_name.get())
+    newsavefile.saveToSaveFile()
 
 ## Depending on a dropdown variable clicks the correct button (job queue, move to it's own class)
 def checkAndRunDropdownInput(variable):
@@ -317,6 +330,17 @@ def job_queue_clicked():
     waiting_label4 = Label(job_queue_frame, textvariable=waiting_string3, font=(main_font, 11), bg=frame_color)
     waiting_label4.grid(row=4, column=1, sticky = W, padx=5, pady=6)
 
+def darklightmodeswitch(menu, info_text, terminal_log):
+    if darklightmode.get() == "Dark mode":
+        darklightmode.set("Light mode")
+        info_text.setDarkMode()
+        terminal_log.setDarkMode()
+    else:
+        darklightmode.set("Dark mode")
+        info_text.setLightMode()
+        terminal_log.setLightMode()
+    menu.entryconfigure(4, label=darklightmode.get())
+
 def donothing():
     x = 0
 
@@ -391,6 +415,8 @@ time_format_variable = StringVar(root, "%Y-%m-%d %H:%M:%S")
 
 MS_input_variable = StringVar(root, "ID_SB_uv.dppp.MS")
 
+darklightmode = StringVar(root, "Dark mode")
+
 # Coloring options
 main_color = 'white'
 frame_color = 'grey'
@@ -439,8 +465,8 @@ right_bottom_frame.rowconfigure(1, weight=1)
 menubar = Menu(root)
 filemenu = Menu(menubar, tearoff=0)
 filemenu.add_command(label="New", command=change_fits)
-filemenu.add_command(label="Open", command=donothing)
-filemenu.add_command(label="Save", command=donothing)
+filemenu.add_command(label="Load", command=load_clicked)
+filemenu.add_command(label="Save", command=save_clicked)
 filemenu.add_separator()
 filemenu.add_command(label="Exit", command=root.quit)
 menubar.add_cascade(label="File", menu=filemenu)
@@ -462,6 +488,7 @@ settingsmenu.add_command(label="Wsclean", command=manage_config_clicked)
 settingsmenu.add_command(label="Predict", command=manage_predict_clicked)
 settingsmenu.add_command(label="Applycal", command=manage_applycal_clicked)
 settingsmenu.add_command(label="Applybeam", command=manage_applybeam_clicked)
+settingsmenu.add_command(label=darklightmode.get(), command= lambda: darklightmodeswitch(settingsmenu, info_text, terminal_log))
 menubar.add_cascade(label="Settings", menu=settingsmenu)
 
 commandmenu = Menu(menubar, tearoff=0)
