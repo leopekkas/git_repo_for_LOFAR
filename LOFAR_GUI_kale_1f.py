@@ -6,8 +6,8 @@ from Redirect import *
 from File_reader import read_config, make_predict_file, make_applycal_file, lines_in_wsclean
 from File_reader import make_applybeam_file, print_parset, make_sourcedb
 from fits_plotting_tool import save_fits, produce_video, icrs_to_helio, plot_single_fits
-from UI_helper_functions_py2 import disableButtons, enableButtons
-from UI_helper_functions_py2 import make_info_buttons, proceed_warning_message
+from UI_helper_functions import disableButtons, enableButtons
+from UI_helper_functions import make_info_buttons, proceed_warning_message
 from TextBox import TextBox
 from ButtonFunctions import load_clicked, save_clicked, predict_clicked, applycal_clicked, applybeam_clicked
 from ButtonFunctions import wsclean_clicked, darklightmodeswitch, view_calibrator_clicked, view_MS_clicked
@@ -857,7 +857,7 @@ def change_config():
 change_config_btn = Button(left_frame, text="Load", command=change_config, width=view_width)
 change_config_btn.grid(row=main_row_ind, column=view_column, padx=1, pady=(2,0))
 
-view_config_btn = Button(left_frame, text="View", command= lambda: print_config(config_file_path.get(), width=view_width)
+view_config_btn = Button(left_frame, text="View", command= lambda: print_config(config_file_path.get(), info_text), width=view_width)
 view_config_btn.grid(row=main_row_ind, column=view_column + 1, padx=1, pady=(2,0), sticky=W)
 
 buttons.append(view_config_btn)
