@@ -1,5 +1,5 @@
 from Tkinter import Toplevel, Frame, Label, N, S, E, W, Checkbutton, Entry
-from UI_helper_functions_py2 import buildAnEntryBox
+from UI_helper_functions import buildAnEntryBox
 
 ## A factory function that returns an Entry that can change the values for .parset options
 #

@@ -163,15 +163,14 @@ def make_info_buttons(frame, row_ind, root):
     applybeam_parset_info_btn = info_button_factory(frame, root, "Applies the telescope beam(?) into the Solar MS\n and produces a CORRECTED_DATA column into it")
     applybeam_parset_info_btn.grid(row=row_ind, column=3, padx=(2, 0), pady=3, sticky=W+S)
 
-    row_ind+=1
+    row_ind+=4
     wsclean_info_btn = info_button_factory(frame, root, "Produces .fits files from the MS\naccording to the configuration file")
     wsclean_info_btn.grid(row=row_ind, column=2, padx=(2, 0), pady=3, sticky=W+S)
 
-    row_ind+=1
+    row_ind+=4
     coordinate_info_btn = info_button_factory(frame, root, "Runs a coordinate transformation")
     coordinate_info_btn.grid(row=row_ind, column=1, padx=(2, 0), pady=3, sticky=W+S)
 
-    row_ind+=1
     row_ind+=1
     multiple_plot_info_btn = info_button_factory(frame, root, "Choose multiple .fits files with [ctrl + click] for plotting into png files")
     multiple_plot_info_btn.grid(row=row_ind, column=1, columnspan=2, padx=(2, 0), pady=3, sticky=W+S)
