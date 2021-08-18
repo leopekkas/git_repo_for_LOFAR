@@ -14,12 +14,14 @@ import matplotlib.image as mpimg
 #from astropy import units as u
 #from astropy.io import fits
 
+## Plots a single .fits file
 def plot_single_fits(filename):
     try:
         m = sunpy.map.Map(filename)
         m.plot()
         plt.show()
         plt.close('all')
+        print("Plotted a file called: " + filename + "\n")
     except ValueError:
         print("No file with the chosen name found\n")
 
@@ -36,7 +38,7 @@ def save_fits(filename, index):
     plt.savefig(pltname)
     fig = plt.gcf()
     plt.close(fig)
-    
+
     print(filename + "\n")
 
 def produce_video(images):
@@ -53,7 +55,7 @@ def produce_video(images):
     #ani.save('movie.mp4')
     #plt.show()
 
-# coordinate transformation function
+## Coordinate transformation function
 def icrs_to_helio(file):
     x=0
 #    hdu = fits.open(file)
@@ -96,4 +98,3 @@ def icrs_to_helio(file):
     #rotate_map = lofar_map.rotate()
 
     #return rotate_map
-

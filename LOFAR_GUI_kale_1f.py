@@ -3,16 +3,35 @@ import tkFileDialog as filedialog
 import time
 import subprocess as sub
 from Redirect import *
-from File_reader import read_config, print_config, make_predict_file, make_applycal_file, lines_in_wsclean
+from File_reader import read_config, make_predict_file, make_applycal_file, lines_in_wsclean
 from File_reader import make_applybeam_file, print_parset, make_sourcedb
 from fits_plotting_tool import save_fits, produce_video, icrs_to_helio, plot_single_fits
-from UI_helper_functions import disableButtons, enableButtons, setUpCheckbuttons, setUpPredictEntries, setUpApplycalEntries, setUpApplybeamEntries
-from UI_helper_functions import make_info_buttons, proceed_warning_message
+from UI_helper_functions_py2 import disableButtons, enableButtons
+from UI_helper_functions_py2 import make_info_buttons, proceed_warning_message
 from TextBox import TextBox
 from ButtonFunctions import load_clicked, save_clicked, predict_clicked, applycal_clicked, applybeam_clicked
 from ButtonFunctions import wsclean_clicked, darklightmodeswitch, view_calibrator_clicked, view_MS_clicked
-from ButtonFunctions import skymodel_contents
+from ButtonFunctions import skymodel_contents, view_predict_clicked, view_applycal_clicked, view_applybeam_clicked
+from ButtonFunctions import print_config, view_wsclean_clicked
+from SettingWindows import manage_predict_clicked, manage_applycal_clicked, manage_applybeam_clicked
+from SettingWindows import manage_config_clicked
 import os
+
+def change_fits():
+    filename = filedialog.askopenfilename(initialdir = os.getcwd(),
+                                            title="Select a .fits file for plotting",
+                                            filetypes = ((".fits files", "*.fits"),
+                                                        ("all files", "*")))
+
+    if not filename:
+        info_text.writeToFeed("Change the .fits file: No file chosen \n")
+    else:
+        fits_file_path.set(filename)
+
+        filename = os.path.basename(filename)
+
+        fits_file_name.set(filename)
+        fits_file_name_label.update()
 
 ## Depending on a dropdown variable clicks the correct button (job queue, move to it's own class)
 def checkAndRunDropdownInput(variable):
@@ -56,121 +75,6 @@ def checkAndRunDropdownInput(variable):
                         MS_id,
                         time_format_variable
                         )
-
-def multiple_plot_clicked():
-    filez = filedialog.askopenfilenames(initialdir = os.getcwd(),
-                                            title="Select files",
-                                            filetypes = ((".fits files", "*.fits"),
-                                                        ("all files", "*")))
-
-    lst = list(filez)
-    index = 0
-    if len(lst) == 0:
-        info_text.writeToFeed("No file(s) chosen \n")
-    else:
-        lst = list(filez)
-        index = 0
-        for f in lst:
-            #f = os.path.basename(f)
-            save_fits(f, index)
-            index = index + 1
-        print("Plotting multiple files \n")
-
-def video_clicked():
-    # Call a function that outputs a video from png files
-    filez = filedialog.askopenfilenames(initialdir = os.getcwd(),
-                                            title="Select files",
-                                            filetypes = ((".png files", "*.png"),
-                                                        ("all files", "*")))
-
-    try:
-        lst = list(filez)
-        #for i in range(len(lst)):
-        #    lst[i] = os.path.basename(lst[i])
-        produce_video(lst)
-        print("Saved a video with the name \"video.mp4\" \n")
-    except:
-        info_text.writeToFeed("No file(s) chosen \n")
-
-def manage_predict_clicked():
-    predict_main_window = Toplevel(root)
-    predict_main_window.title("predict.parset")
-    predict_main_window.wm_attributes('-type', 'dialog')
-
-    top_frame = Frame(predict_main_window)
-    top_frame.grid(row=0, column=0, sticky=N, padx=5, pady=5)
-
-    predict_frame = Frame(predict_main_window)
-    predict_frame.grid(row=1, column=0, sticky=N+W, padx=5, pady=5)
-
-    predict_window_title = Label(top_frame, text="Options in predict.parset", font=(main_font, 13, "bold"))
-    predict_window_title.grid(row=0, column=0, padx=(20, 0), pady=20)
-
-    setUpPredictEntries(predict_frame, predict_msout, predict_solint, calibrator_nametag, predict_sourcedb_output, predict_caltype, predict_usebeammodel, predict_onebeamperpatch)
-
-def manage_applycal_clicked():
-    applycal_main_window = Toplevel(root)
-    applycal_main_window.title("applycal.parset")
-    applycal_main_window.wm_attributes('-type', 'dialog')
-
-    top_frame = Frame(applycal_main_window)
-    top_frame.grid(row=0, column=0, sticky=N, padx=5, pady=5)
-
-    applycal_frame = Frame(applycal_main_window)
-    applycal_frame.grid(row=1, column=0, sticky=N+W, padx=5, pady=5)
-
-    applycal_window_title = Label(top_frame, text="Options in applycal.parset", font=(main_font, 13, "bold"))
-    applycal_window_title.grid(row=0, column=0, padx=(20, 0), pady=20)
-
-    setUpApplycalEntries(applycal_frame, applycal_msout, applycal_datacolumn_in, applycal_datacolumn_out, applycal_parmdb, applybeam_updateweights)
-
-def manage_applybeam_clicked():
-    applybeam_main_window = Toplevel(root)
-    applybeam_main_window.title("applybeam.parset")
-    applybeam_main_window.wm_attributes('-type', 'dialog')
-
-    top_frame = Frame(applybeam_main_window)
-    top_frame.grid(row=0, column=0, sticky=N, padx=5, pady=5)
-
-    applybeam_frame = Frame(applybeam_main_window)
-    applybeam_frame.grid(row=1, column=0, sticky=N+W, padx=5, pady=5)
-
-    applybeam_window_title = Label(top_frame, text="Options in applybeam.parset", font=(main_font, 13, "bold"))
-    applybeam_window_title.grid(row=0, column=0, padx=(20, 0), pady=20)
-
-    setUpApplybeamEntries(applybeam_frame, applybeam_msout, applybeam_datacolumn_in, applybeam_datacolumn_out, applybeam_updateweights)
-
-def manage_config_clicked():
-    config_main_window = Toplevel(root)
-    config_main_window.title("wsclean")
-    config_main_window.resizable(False, False)
-
-    top_frame = Frame(config_main_window)
-    top_frame.grid(row=0, column=0, sticky=N, padx=5, pady=5)
-
-    config_window = Frame(config_main_window)
-    config_window.grid(row=1, column=0, sticky=N+W, padx=5, pady=5)
-
-    config_window_title = Label(top_frame, text="Options in wsclean", font=(main_font, 12, "bold"))
-    config_window_title.grid(row=0, column=0, padx=(12, 0), pady=20)
-
-    setUpCheckbuttons(config_window, bool_vars, config_file_name)
-
-def change_fits():
-    filename = filedialog.askopenfilename(initialdir = os.getcwd(),
-                                            title="Select a .fits file for plotting",
-                                            filetypes = ((".fits files", "*.fits"),
-                                                        ("all files", "*")))
-
-    if not filename:
-        info_text.writeToFeed("Change the .fits file: No file chosen \n")
-    else:
-        fits_file_path.set(filename)
-
-        filename = os.path.basename(filename)
-
-        fits_file_name.set(filename)
-        fits_file_name_label.update()
 
 def job_queue_clicked():
     job_queue_window = Toplevel(root)
@@ -425,10 +329,32 @@ formatmenu.add_cascade(label="MS input file format", menu=MS_input_menu)
 menubar.add_cascade(label="Format", menu=formatmenu)
 
 settingsmenu = Menu(menubar, tearoff=0)
-settingsmenu.add_command(label="Wsclean", command=manage_config_clicked)
-settingsmenu.add_command(label="Predict", command=manage_predict_clicked)
-settingsmenu.add_command(label="Applycal", command=manage_applycal_clicked)
-settingsmenu.add_command(label="Applybeam", command=manage_applybeam_clicked)
+settingsmenu.add_command(label="Wsclean", command= lambda: manage_config_clicked( root,
+                                                            bool_vars,
+                                                            config_file_name
+                                                            ))
+settingsmenu.add_command(label="Predict", command= lambda: manage_predict_clicked( root,
+                                                            predict_msout,
+                                                            predict_solint,
+                                                            calibrator_nametag,
+                                                            predict_sourcedb_output,
+                                                            predict_caltype,
+                                                            predict_usebeammodel,
+                                                            predict_onebeamperpatch
+                                                            ))
+settingsmenu.add_command(label="Applycal", command= lambda: manage_applycal_clicked( root,
+                                                            applycal_msout,
+                                                            applycal_datacolumn_in,
+                                                            applycal_datacolumn_out,
+                                                            applycal_parmdb,
+                                                            applybeam_updateweights
+                                                            ))
+settingsmenu.add_command(label="Applybeam", command= lambda: manage_applybeam_clicked( root,
+                                                            applybeam_msout,
+                                                            applybeam_datacolumn_in,
+                                                            applybeam_datacolumn_out,
+                                                            applybeam_updateweights
+                                                            ))
 settingsmenu.add_command(label=darklightmode.get(), command= lambda: darklightmodeswitch(settingsmenu, info_text, terminal_log))
 menubar.add_cascade(label="Settings", menu=settingsmenu)
 
@@ -816,18 +742,17 @@ main_row_ind += 1
 predict_btn.grid(row=main_row_ind, column=0, sticky = W+N, pady=3, padx=(70, 0))
 buttons.append(predict_btn)
 
-def view_predict_clicked():
-    make_predict_file(calibrator_file_name.get(), predict_msout.get(), calibrator_nametag.get(), predict_sourcedb_output.get(), predict_solint.get(), predict_usebeammodel.get(), predict_onebeamperpatch.get(), predict_caltype.get())
-    if os.path.exists(os.getcwd() + "/predict.parset"):
-        try:
-            # Run NDPPP applycal.parset here
-            print_parset("predict.parset", info_text)
-        except (OSError, KeyboardInterrupt):
-            print("Error in printing the predict.parset contents \n")
-    else:
-        print("Error, no predict.parset found in the working directory \n")
-
-view_predict_btn = Button(left_frame, text="View", command=view_predict_clicked, width=view_width)
+view_predict_btn = Button(left_frame, text="View", width=view_width,
+                command= lambda: view_predict_clicked(  calibrator_file_name,
+                                                        predict_msout,
+                                                        calibrator_nametag,
+                                                        predict_sourcedb_output,
+                                                        predict_solint,
+                                                        predict_usebeammodel,
+                                                        predict_onebeamperpatch,
+                                                        predict_caltype,
+                                                        info_text
+                                                        ))
 view_predict_btn.grid(row=main_row_ind, column=1, sticky = W+N, pady=3, padx=1)
 buttons.append(view_predict_btn)
 
@@ -851,18 +776,15 @@ main_row_ind += 1
 applycal_btn.grid(row=main_row_ind, column=0, sticky = W+N, pady=3, padx=(70, 0))
 buttons.append(applycal_btn)
 
-def view_applycal_clicked():
-    make_applycal_file(MS_file_name.get(), applycal_msout.get(), applycal_datacolumn_in.get(), applycal_datacolumn_out.get(), calibrator_file_name.get(), applycal_updateweights.get())
-    if os.path.exists(os.getcwd() + "/applycal.parset"):
-        try:
-            # Run NDPPP applycal.parset here
-            print_parset("applycal.parset", info_text)
-        except (OSError, KeyboardInterrupt):
-            print("Error in printing the applycal.parset contents \n")
-    else:
-        print("Error, no applycal.parset found in the working directory \n")
-
-view_applycal_btn = Button(left_frame, text="View", command=view_applycal_clicked, width=view_width)
+view_applycal_btn = Button(left_frame, text="View", width=view_width,
+                            command= lambda: view_applycal_clicked(MS_file_name,
+                                                            applycal_msout,
+                                                            applycal_datacolumn_in,
+                                                            applycal_datacolumn_out,
+                                                            calibrator_file_name,
+                                                            applycal_updateweights,
+                                                            info_text
+                                                            ))
 view_applycal_btn.grid(row=main_row_ind, column=1, sticky = W+N, pady=3, padx=1)
 buttons.append(view_applycal_btn)
 
@@ -885,18 +807,14 @@ main_row_ind += 1
 applybeam_btn.grid(row=main_row_ind, column=0, sticky = W+N, pady=3, padx=(70, 0))
 buttons.append(applybeam_btn)
 
-def view_applybeam_clicked():
-    make_applybeam_file(MS_file_name.get(), applybeam_msout.get(), applybeam_datacolumn_in.get(), applybeam_datacolumn_out.get(), applybeam_updateweights.get())
-    if os.path.exists(os.getcwd() + "/applybeam.parset"):
-        try:
-            # Run NDPPP applycal.parset here
-            print_parset("applybeam.parset", info_text)
-        except (OSError, KeyboardInterrupt):
-            print("Error in printing the applybeam.parset contents \n")
-    else:
-        print("Error, no applybeam.parset found in the working directory \n")
-
-view_applybeam_btn = Button(left_frame, text="View", command=view_applybeam_clicked, width=view_width)
+view_applybeam_btn = Button(left_frame, text="View", width=view_width,
+                        command= lambda: view_applybeam_clicked(MS_file_name,
+                                                        applybeam_msout,
+                                                        applybeam_datacolumn_in,
+                                                        applybeam_datacolumn_out,
+                                                        applybeam_updateweights,
+                                                        info_text
+                                                        ))
 view_applybeam_btn.grid(row=main_row_ind, column=1, sticky = W+N, pady=3, padx=1)
 buttons.append(view_applybeam_btn)
 
@@ -939,11 +857,7 @@ def change_config():
 change_config_btn = Button(left_frame, text="Load", command=change_config, width=view_width)
 change_config_btn.grid(row=main_row_ind, column=view_column, padx=1, pady=(2,0))
 
-# View file contents buttons
-def config_contents():
-    print_config(config_file_path.get(), info_text)
-
-view_config_btn = Button(left_frame, text="View", command=config_contents, width=view_width)
+view_config_btn = Button(left_frame, text="View", command= lambda: print_config(config_file_path.get(), width=view_width)
 view_config_btn.grid(row=main_row_ind, column=view_column + 1, padx=1, pady=(2,0), sticky=W)
 
 buttons.append(view_config_btn)
@@ -967,31 +881,12 @@ main_row_ind += 1
 wsclean_btn.grid(row=main_row_ind, column=0, sticky = W+N, pady=3, padx=(70, 0))
 buttons.append(wsclean_btn)
 
-def view_wsclean_clicked():
-    conf_filename = config_file_name.get()
-    myvars = {}
-    try:
-        with open(conf_filename) as f:
-            for line in f:
-                name, value = line.partition("=")[::2]
-                myvars[name.strip()] = str(value)
-    except (OSError, IOError, KeyboardInterrupt):
-        print("An error occured with reading the config file\n")
-        return None
-
-    start_time = "01-01-2000 00:00:00"
-    end_time = "01-01-2000 00:00:00"
-
-    if myvars.has_key("start_time"):
-        start_time = myvars["start_time"]
-    if myvars.has_key("end_time"):
-        end_time = myvars["end_time"]
-    wscommands = lines_in_wsclean(myvars, bool_vars, MS_file_name, start_time, end_time)
-    for x in range(len(wscommands)):
-        print(wscommands[x]),
-    print("\n")
-
-view_wsclean_btn = Button(left_frame, text="View", command=view_wsclean_clicked, width=view_width)
+view_wsclean_btn = Button(left_frame, text="View", width=view_width,
+                            command= lambda: view_wsclean_clicked(
+                            config_file_name,
+                            bool_vars,
+                            MS_file_name
+                            ))
 view_wsclean_btn.grid(row=main_row_ind, column=1, sticky = W+N, pady=3, padx=1)
 buttons.append(view_wsclean_btn)
 
@@ -1007,14 +902,10 @@ fits_file_label = Label(left_frame, text="Plotting FITS: ", font=(main_font, 11)
 main_row_ind+=1
 fits_file_label.grid(row=main_row_ind, column=0, sticky = W + N, pady=(5, 0), padx=(80, 0))
 
-def plot_clicked():
-    print("Plotted a file called: " + fits_file_name.get() + "\n")
-    plot_single_fits(fits_file_path.get())
-
 change_fits_btn = Button(left_frame, text="Load", command=change_fits, width=view_width)
 change_fits_btn.grid(row=main_row_ind, column=view_column, padx=1, pady=(2,0))
 
-view_fits_btn = Button(left_frame, text="View", command=plot_clicked, width=view_width)
+view_fits_btn = Button(left_frame, text="View", command= lambda: plot_single_fits(fits_file_path.get()), width=view_width)
 view_fits_btn.grid(row=main_row_ind, column=view_column + 1, padx=1, pady=(2,0), sticky=W)
 
 fits_file_name_label = Label(left_frame, textvariable=fits_file_name, font=(secondary_font, 11), bg=frame_color)
@@ -1024,7 +915,7 @@ fits_file_name_label.grid(row=main_row_ind, column=0, columnspan=3, sticky = W +
 buttons.append(view_fits_btn)
 buttons.append(change_fits_btn)
 
-# Run a coordinate transformation
+## Runs a coordinate transformation
 def coord_clicked():
     filename = fits_file_path.get()
 
@@ -1039,11 +930,46 @@ coord_btn.grid(row=main_row_ind, column=0, sticky = W+N, padx=(70, 5), pady=(10,
 
 buttons.append(coord_btn)
 
+def multiple_plot_clicked():
+    filez = filedialog.askopenfilenames(initialdir = os.getcwd(),
+                                            title="Select files",
+                                            filetypes = ((".fits files", "*.fits"),
+                                                        ("all files", "*")))
+
+    lst = list(filez)
+    index = 0
+    if len(lst) == 0:
+        info_text.writeToFeed("No file(s) chosen \n")
+    else:
+        lst = list(filez)
+        index = 0
+        for f in lst:
+            #f = os.path.basename(f)
+            save_fits(f, index)
+            index = index + 1
+        print("Plotting multiple files \n")
+
 plot_many_btn = Button(left_frame, text="Plot & save multiple .fits files", width=25, command=multiple_plot_clicked)
 main_row_ind += 1
 plot_many_btn.grid(row=main_row_ind, column=0, sticky = N + W, padx=(70, 5), pady=3)
 
 buttons.append(plot_many_btn)
+
+def video_clicked():
+    # Call a function that outputs a video from png files
+    filez = filedialog.askopenfilenames(initialdir = os.getcwd(),
+                                            title="Select files",
+                                            filetypes = ((".png files", "*.png"),
+                                                        ("all files", "*")))
+
+    try:
+        lst = list(filez)
+        #for i in range(len(lst)):
+        #    lst[i] = os.path.basename(lst[i])
+        produce_video(lst)
+        print("Saved a video with the name \"video.mp4\" \n")
+    except:
+        info_text.writeToFeedFeed("No file(s) chosen \n")
 
 video_btn = Button(left_frame, text="Wrap multiple plots into a video", width=25, command=video_clicked, state='disabled')
 main_row_ind += 1
