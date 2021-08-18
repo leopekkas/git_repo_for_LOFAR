@@ -17,22 +17,6 @@ from SettingWindows import manage_predict_clicked, manage_applycal_clicked, mana
 from SettingWindows import manage_config_clicked
 import os
 
-def change_fits():
-    filename = filedialog.askopenfilename(initialdir = os.getcwd(),
-                                            title="Select a .fits file for plotting",
-                                            filetypes = ((".fits files", "*.fits"),
-                                                        ("all files", "*")))
-
-    if not filename:
-        info_text.writeToFeed("Change the .fits file: No file chosen \n")
-    else:
-        fits_file_path.set(filename)
-
-        filename = os.path.basename(filename)
-
-        fits_file_name.set(filename)
-        fits_file_name_label.update()
-
 ## Depending on a dropdown variable clicks the correct button (job queue, move to it's own class)
 def checkAndRunDropdownInput(variable):
     if (variable.get() == "NDPPP predict.parset"):
@@ -309,9 +293,22 @@ right_bottom_frame.rowconfigure(1, weight=1)
 # The top menu bar of the main window
 menubar = Menu(root)
 filemenu = Menu(menubar, tearoff=0)
-filemenu.add_command(label="New", command=change_fits)
-filemenu.add_command(label="Load", command=load_clicked)
-filemenu.add_command(label="Save", command=save_clicked)
+filemenu.add_command(label="Load", command= lambda: load_clicked(skymodel_input,
+                                                                calibrator_file_name,
+                                                                MS_file_name,
+                                                                calibrator_nametag,
+                                                                predict_sourcedb_output,
+                                                                config_file_name,
+                                                                fits_file_name
+                                                                ))
+filemenu.add_command(label="Save", command= lambda: save_clicked(skymodel_input,
+                                                                MS_file_name,
+                                                                calibrator_file_name,
+                                                                calibrator_nametag,
+                                                                predict_sourcedb_output,
+                                                                config_file_name,
+                                                                fits_file_name
+                                                                ))
 filemenu.add_separator()
 filemenu.add_command(label="Exit", command=root.quit)
 menubar.add_cascade(label="File", menu=filemenu)
@@ -901,6 +898,22 @@ visualization_label.grid(row=main_row_ind, column=0, columnspan=2, sticky = W + 
 fits_file_label = Label(left_frame, text="Plotting FITS: ", font=(main_font, 11), bg=frame_color)
 main_row_ind+=1
 fits_file_label.grid(row=main_row_ind, column=0, sticky = W + N, pady=(5, 0), padx=(80, 0))
+
+def change_fits():
+    filename = filedialog.askopenfilename(initialdir = os.getcwd(),
+                                            title="Select a .fits file for plotting",
+                                            filetypes = ((".fits files", "*.fits"),
+                                                        ("all files", "*")))
+
+    if not filename:
+        info_text.writeToFeed("Change the .fits file: No file chosen \n")
+    else:
+        fits_file_path.set(filename)
+
+        filename = os.path.basename(filename)
+
+        fits_file_name.set(filename)
+        fits_file_name_label.update()
 
 change_fits_btn = Button(left_frame, text="Load", command=change_fits, width=view_width)
 change_fits_btn.grid(row=main_row_ind, column=view_column, padx=1, pady=(2,0))
