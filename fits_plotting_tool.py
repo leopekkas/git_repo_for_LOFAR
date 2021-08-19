@@ -1,4 +1,4 @@
-## @file fits_plotting_tool_py2.py
+## @file fits_plotting_tool.py
 # @brief In charge of plotting/saving the selected file(s)
 
 import matplotlib as mpl
