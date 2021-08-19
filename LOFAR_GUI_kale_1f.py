@@ -491,7 +491,10 @@ def change_calibrator(index, MS_input_string):
             calibrator_id_entry_feed.insert(0, "MS file name:")
 
             def handle_enter_calibrator(txt):
-                calibrator_file_name.set(calibrator_id_entry_feed.get() + ".MS")
+                if (calibrator_id_entry_feed.get()[-3:] == ".MS"):
+                    calibrator_file_name.set(calibrator_id_entry_feed.get())
+                else:
+                    calibrator_file_name.set(calibrator_id_entry_feed.get() + ".MS")
                 calibrator_id.set(calibrator_id_entry_feed.get())
                 calibrator_id_entry_feed.grid_remove()
                 change_open.set(False)
@@ -607,7 +610,10 @@ def change_MS(index, MS_input_string):
             MS_id_entry_feed.insert(0, "MS file name:")
 
             def handle_enter_MS(txt):
-                MS_file_name.set(MS_id_entry_feed.get() + ".MS")
+                if (MS_id_entry_feed.get()[-3:] == ".MS"):
+                    MS_file_name.set(MS_id_entry_feed.get())
+                else:
+                    MS_file_name.set(MS_id_entry_feed.get() + ".MS")
                 MS_id.set(MS_id_entry_feed.get())
                 MS_id_entry_feed.grid_remove()
                 change_MS_open.set(False)
