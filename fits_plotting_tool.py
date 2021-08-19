@@ -1,3 +1,6 @@
+## @file fits_plotting_tool_py2.py
+# @brief In charge of plotting/saving the selected file(s)
+
 import matplotlib as mpl
 mpl.use("QT4agg")
 import sunpy.map

@@ -1,3 +1,6 @@
+## @file UI_helper_functions.py
+# @brief Helper functions for the UI
+
 from Tkinter import Tk, Frame, BooleanVar, Checkbutton, Button, W, N, E, S, Menu, Label, Text, Scrollbar, IntVar, Entry, Toplevel
 import tkMessageBox
 import sys

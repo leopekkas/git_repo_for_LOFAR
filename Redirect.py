@@ -1,3 +1,6 @@
+## @file Redirect.py
+# @brief Redirects text information from the terminal to a Tkinter widget
+
 from Tkinter import TclError
 import sys
 

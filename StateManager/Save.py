@@ -1,3 +1,6 @@
+## @file Save.py
+# @brief Class structure that holds the values of the program in a save file
+
 from tkFileDialog import asksaveasfile
 
 class Save:

@@ -1,5 +1,8 @@
+## @file SettingWindows.py
+# @brief In charge of building and managing the management windows for wsclean config etc.
+
 from Tkinter import Toplevel, Frame, Label, N, S, E, W, Checkbutton, Entry
-from UI_helper_functions import buildAnEntryBox
+from UI_helper_functions_py2 import buildAnEntryBox
 
 ## A factory function that returns an Entry that can change the values for .parset options
 #

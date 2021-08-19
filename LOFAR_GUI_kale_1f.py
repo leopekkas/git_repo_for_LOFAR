@@ -1,3 +1,6 @@
+## @file LOFAR_GUI_kale_1f.py
+# @brief Main file of the program in charge of placing the UI elements
+
 from Tkinter import Tk, Menu, StringVar, IntVar, BooleanVar, Checkbutton, Frame, Label, Button, Scrollbar, Text, Toplevel, OptionMenu, E, W, S, N, PhotoImage, Entry
 import tkFileDialog as filedialog
 import time

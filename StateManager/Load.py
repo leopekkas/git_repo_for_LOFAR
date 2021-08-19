@@ -1,3 +1,6 @@
+## @file Load.py
+# @brief Loading the state of the program from a savefile
+
 import tkFileDialog as filedialog
 import os
 ## Loads the values from a save file into the StringVars in the main program

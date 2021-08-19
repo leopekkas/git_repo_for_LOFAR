@@ -1,3 +1,6 @@
+## @file TextBox.py
+# @brief Class structure that builds and manages text fields (information/terminal log)
+
 from Tkinter import Label, Text, Scrollbar, E, W, N, S, Button, Entry
 import sys
 from Redirect import *
@@ -26,7 +29,7 @@ class TextBox:
         log_title_label.grid(row=0, column=0, padx=5, pady=(10, 5))
         self.text_log = Text(frame, height=self.height, width=self.width, yscrollcommand=self.logscrollbar.set, state="normal", font=("Courier", self.font_size))
         self.text_log.config(fg = self.textbox_fg, bg = self.textbox_bg)
-        
+
         self.logscrollbar.grid(row=1, column=1, padx=2, pady=(0, 5), sticky=N+S)
         self.logscrollbar.config(command=self.text_log.yview)
 

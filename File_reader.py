@@ -1,3 +1,6 @@
+## @file File_reader.py
+# @brief File reading and writing functions
+
 import sys
 import subprocess as sub
 import os, errno

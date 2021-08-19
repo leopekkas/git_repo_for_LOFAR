@@ -1,3 +1,6 @@
+## @file ButtonFunctions.py
+# @brief Holds functionalities for the buttons in the program
+
 import sys
 sys.path.insert(1, 'StateManager')
 import subprocess as sub
@@ -5,7 +8,7 @@ import subprocess as sub
 from Save import Save
 from Load import LoadNewValues
 from File_reader import make_predict_file, make_applycal_file, make_applybeam_file, print_skymodel, read_config
-from File_reader import lines_in_wsclean
+from File_reader_py2 import lines_in_wsclean
 from UI_helper_functions import disableButtons, enableButtons
 
 ## Click function for loading a new state into the program
