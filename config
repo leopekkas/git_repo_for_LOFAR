@@ -1,4 +1,4 @@
-cores=60
+cores=70
 memory_limit=50
 mgain=0.95
 weight_briggs=0
