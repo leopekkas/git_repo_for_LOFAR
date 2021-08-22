@@ -145,3 +145,12 @@ class TextBox:
     def writeToFeedNoLinebreak(self, line):
         self.text_log.insert('end', line)
         self.text_log.see('end')
+
+    ## Writes an intro of the program into this textbox
+    def printIntrotext(self):
+        introtext = "\n************************************************************\n"
+        introtext += "The LOFAR Imaging tool is a this-and-that tool that uses x y z etc."
+        introtext += "\nSee the user manual for details on usage"
+        self.text_log.insert('end', introtext)
+        self.text_log.insert('end', "\n************************************************************\n\n")
+        self.text_log.see('end')

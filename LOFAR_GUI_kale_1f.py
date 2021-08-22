@@ -1001,6 +1001,7 @@ video_btn.grid(row=main_row_ind, column=0, sticky = N + W, padx=(70, 5), pady=3)
 # Text box for an information feed
 info_text = TextBox(right_frame, "Information feed", 37, 70)
 info_text.addHighlightTextEntry()
+info_text.printIntrotext()
 
 # Text box for the terminal feed information
 terminal_log = TextBox(right_bottom_frame, "Terminal log", 23, 70)
